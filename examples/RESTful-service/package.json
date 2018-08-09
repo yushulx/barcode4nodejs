@@ -1,0 +1,10 @@
+{
+  "name": "dbr-restful-service",
+  "version": "1.0.0",
+  "description": "DBR RESTful Demo",
+  "main": "server.js",
+  "dependencies": {
+    "restify": "^4.3.4"
+  },
+  "author": "yushulx"
+}

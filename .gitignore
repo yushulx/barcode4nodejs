@@ -2,3 +2,4 @@
 /examples/web/node_modules
 /src/build
 /examples/desktop-electron/node_modules
+/examples/RESTful-service/node_modules

@@ -84,6 +84,15 @@ node-gyp build
     node camera_barcode_reader.js
     ```
 
+- examples/RESTful-service
+
+    ```
+    npm install restify
+    node server.js
+    ```
+    
+    Open `https://< ip >:2018` to scan barcodes in web browsers.
+
 ## Related Articles
 * [How to Wrap Dynamsoft Linux Barcode SDK for Node.js](https://www.codepool.biz/linux-barcode-sdk-node-javascript.html)
 * [How to Build Node.js Barcode Reader on Raspberry Pi](https://www.codepool.biz/raspberry-pi-nodejs-barcode-reader.html)

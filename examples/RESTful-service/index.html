@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="jquery-1.11.3.min.js"></script>
+</head>
+<body>
+  <h1>Dynamsoft Barcode RESTful API Demo</h1>
+  <div>Barcode result: <span id="dbr"></span></div>
+  <div id="videoOption" style="display: none;">
+    Camera Sources: <select id="videoSource"></select>
+  </div>
+  <button id="go">Read Barcode</button>
+  <div>
+    <video style="float:left"></video>
+    <canvas id="pcCanvas" width="640" height="480" style="display: none; float: left;"></canvas>
+    <canvas id="mobileCanvas" width="240" height="320" style="display: none; float: left;"></canvas>
+  </div>
+  <div>
+    <img id="image"/>
+  </div>
+</body>
+<script src="video.js"></script>
+</html>
