@@ -29,37 +29,64 @@ server.post('/dbr', function create(req, res, next) {
   //   console.log("Base64 saved!");
   // });
 
-  var data = new Buffer(req.body, 'base64');
-  var file = __dirname + '/' + new Date().getTime() + '.png';
+  // var data = new Buffer(req.body, 'base64');
+  // var file = __dirname + '/' + new Date().getTime() + '.png';
   // var file = __dirname + '/' + 'test.png';
 
-  fs.writeFile(file, data, function (err) {
-    dbr.decodeFileAsync(file, barcodeTypes, function (err, msg) {
-      fs.unlink(file, function (err) {
-        console.log('Removed cached: ' + file);
-      });
+  // fs.writeFile(file, data, function (err) {
+  //   dbr.decodeFileAsync(file, barcodeTypes, function (err, msg) {
+  //     fs.unlink(file, function (err) {
+  //       console.log('Removed cached: ' + file);
+  //     });
 
-      var final_result = "";
-      var hasResult = false;
-      for (index in msg) {
-        hasResult = true;
-        var result = msg[index]
-        final_result += "value: " + result['value'] + "; ";
-        console.log(result['format']);
-        console.log(result['value']);
-        console.log("##################");
-      }
+  //     var final_result = "";
+  //     var hasResult = false;
+  //     for (index in msg) {
+  //       hasResult = true;
+  //       var result = msg[index]
+  //       final_result += "value: " + result['value'] + "; ";
+  //       console.log(result['format']);
+  //       console.log(result['value']);
+  //       console.log("##################");
+  //     }
 
-      if (!hasResult) {
-        final_result = "No barcode detected. ";
-      }
+  //     if (!hasResult) {
+  //       final_result = "No barcode detected. ";
+  //     }
 
-      final_result += new Date();
+  //     final_result += new Date();
 
-      res.send(200, final_result);
-      next();
-    }, "");
-  });
+  //     res.send(200, final_result);
+  //     next();
+  //   }, "");
+  // });
+  // let image = str(req.body);
+  // console.log(image);
+  dbr.decodeBase64Async(req.body, barcodeTypes, function (err, msg) {
+    // fs.unlink(file, function (err) {
+    //   console.log('Removed cached: ' + file);
+    // });
+
+    var final_result = "";
+    var hasResult = false;
+    for (index in msg) {
+      hasResult = true;
+      var result = msg[index]
+      final_result += "value: " + result['value'] + "; ";
+      console.log(result['format']);
+      console.log(result['value']);
+      console.log("##################");
+    }
+
+    if (!hasResult) {
+      final_result = "No barcode detected. ";
+    }
+
+    final_result += new Date();
+
+    res.send(200, final_result);
+    next();
+  }, "");
 });
 
 server.listen(2018, function () {

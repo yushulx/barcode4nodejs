@@ -15,7 +15,8 @@ void* hBarcode = NULL;
 typedef enum {
 	NO_BUFFER,
 	FILE_STREAM,
-	YUYV_BUFFER,	
+	YUYV_BUFFER,
+	BASE64	
 } BufferType;
 
 struct BarcodeWorker
@@ -32,6 +33,7 @@ struct BarcodeWorker
 	int height; 					// image height
 	BufferType bufferType;			// buffer type
 	char templateName[128];			// template name
+	const char * pszBase64;			// image as base64 string
 };
 
 /**
@@ -115,6 +117,14 @@ static void DetectionWorking(uv_work_t *req)
 				}
 			}
 			break;
+		case BASE64:
+			{
+				if (worker->pszBase64) 
+				{
+					ret = DBR_DecodeBase64String(hBarcode, worker->pszBase64, worker->templateName);
+				}
+			}
+			break;
 		default:
 			{
 				ret = DBR_DecodeFile(hBarcode, worker->filename, worker->templateName);
@@ -150,21 +160,26 @@ static void DetectionDone(uv_work_t *req,int status)
 	// get barcode results
 	STextResultArray *pResults = worker->pResults;
 	int errorCode = worker->errorCode;
-	int count = pResults->nResultsCount;
 
 	// array for storing barcode results
 	Local<Array> barcodeResults = Array::New(isolate);
 
-	for (int i = 0; i < count; i++)
+	if (pResults) 
 	{
-		Local<Object> result = Object::New(isolate);
-		result->Set(String::NewFromUtf8(isolate, "format"), String::NewFromUtf8(isolate, pResults->ppResults[i]->pszBarcodeFormatString));
-		result->Set(String::NewFromUtf8(isolate, "value"), String::NewFromUtf8(isolate, pResults->ppResults[i]->pszBarcodeText));
-		barcodeResults->Set(Number::New(isolate, i), result);
-	}
+		int count = pResults->nResultsCount;
 
-	// release memory of barcode results
-	DBR_FreeTextResults(&pResults);
+		for (int i = 0; i < count; i++)
+		{
+			Local<Object> result = Object::New(isolate);
+			result->Set(String::NewFromUtf8(isolate, "format"), String::NewFromUtf8(isolate, pResults->ppResults[i]->pszBarcodeFormatString));
+			result->Set(String::NewFromUtf8(isolate, "value"), String::NewFromUtf8(isolate, pResults->ppResults[i]->pszBarcodeText));
+			barcodeResults->Set(Number::New(isolate, i), result);
+		}
+
+		// release memory of barcode results
+		DBR_FreeTextResults(&pResults);
+	}
+	
 
     // run the callback
 	const unsigned argc = 2;
@@ -321,6 +336,36 @@ void LoadTemplates(const FunctionCallbackInfo<Value>& args)
 	DBR_LoadSettingsFromFile(hBarcode, pszFileName, szErrorMsg, 256);
 }
 
+/*
+ *	decodeBase64Async(base64, barcodeTypes, callback)
+ */
+void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
+	if (!createDBR()) {return;}
+
+	Isolate* isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+
+	// get arguments
+	String::Utf8Value base64(args[0]->ToString());
+	char *pszBase64 = *base64;
+	int iFormat = args[1]->IntegerValue(); // barcode types
+	Local<Function> cb = Local<Function>::Cast(args[2]); // javascript callback function
+	String::Utf8Value templateName(args[3]->ToString()); // template name
+	char *pTemplateName = *templateName;
+
+	// initialize BarcodeWorker
+	BarcodeWorker *worker = new BarcodeWorker;
+	worker->request.data = worker;
+	worker->callback.Reset(isolate, cb);
+	worker->iFormat = iFormat;
+	worker->pResults = NULL;
+	worker->pszBase64 = pszBase64;
+	worker->bufferType = BASE64;
+	strcpy(worker->templateName, pTemplateName);
+
+	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
+}
+
 void Init(Handle<Object> exports) {
 	NODE_SET_METHOD(exports, "create", Create);
 	NODE_SET_METHOD(exports, "destroy", Destroy);
@@ -329,6 +374,7 @@ void Init(Handle<Object> exports) {
 	NODE_SET_METHOD(exports, "initLicense", InitLicense);
 	NODE_SET_METHOD(exports, "decodeFileAsync", DecodeFileAsync);
 	NODE_SET_METHOD(exports, "loadTemplates", LoadTemplates);
+	NODE_SET_METHOD(exports, "decodeBase64Async", DecodeBase64Async);
 }
 
 NODE_MODULE(dbr, Init)
