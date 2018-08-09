@@ -77,6 +77,13 @@ node-gyp build
     npm start
     ```
 
+- examples/linux-camera
+
+    ```
+    npm install v4l2camera
+    node camera_barcode_reader.js
+    ```
+
 ## Related Articles
 * [How to Wrap Dynamsoft Linux Barcode SDK for Node.js](https://www.codepool.biz/linux-barcode-sdk-node-javascript.html)
 * [How to Build Node.js Barcode Reader on Raspberry Pi](https://www.codepool.biz/raspberry-pi-nodejs-barcode-reader.html)
