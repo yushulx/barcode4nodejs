@@ -1,6 +1,5 @@
-var dbr = require('../../src/build/Release/dbr');
-var license = require('../license');
-var barcodeTypes = 0x3FF | 0x2000000 | 0x4000000 | 0x8000000;  // 1D, PDF417, QRCODE, DataMatrix
+var dbr = require('../../src/config');
+var barcodeTypes = dbr.barcodeTypes;
 
 var v4l2camera = require("v4l2camera");
 
@@ -17,8 +16,6 @@ if (cam.configGet().formatName !== "YUYV") {
     console.log("YUYV camera required");
     process.exit(1);
 }
-
-dbr.initLicense(license);
 
 cam.start();
 

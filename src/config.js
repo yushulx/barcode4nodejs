@@ -16,4 +16,17 @@ else {
     console.log('Unknown Operating System');
 }
 
-module.exports = license;
+var dbr = require('./build/Release/dbr');
+var barcodeTypes = 0x3FF | 0x2000000 | 0x4000000 | 0x8000000;  // 1D, PDF417, QRCODE, DataMatrix
+
+// Initialize DBR license.
+// Please visit https://www.dynamsoft.com/CustomerPortal/Portal/Triallicense.aspx or contact support@dynamsoft.com to get a valid trial or full license.
+dbr.initLicense(license);
+
+module.exports = {
+    decodeFileAsync: dbr.decodeFileAsync,
+    decodeFileStreamAsync: dbr.decodeFileStreamAsync,
+    decodeBase64Async: dbr.decodeBase64Async,
+    decodeYUYVAsync: dbr.decodeYUYVAsync,
+    barcodeTypes: barcodeTypes
+};

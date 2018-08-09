@@ -1,8 +1,7 @@
-var dbr = require('../../src/build/Release/dbr');
-var license = require('../license');
+var dbr = require('../../src/config');
+var barcodeTypes = dbr.barcodeTypes;
 var readline = require('readline');
 var fs = require('fs');
-var barcodeTypes = 0x3FF | 0x2000000 | 0x4000000 | 0x8000000;  // 1D, PDF417, QRCODE, DataMatrix
 
 function decodeFileAsync(fileName) {
   dbr.decodeFileAsync(fileName, barcodeTypes, function(err, msg) {
@@ -64,10 +63,6 @@ function decodeYUYVAsync(fileName, width, height) {
     });
   });
 }
-
-// Initialize DBR license.
-// Please visit https://www.dynamsoft.com/CustomerPortal/Portal/Triallicense.aspx or contact support@dynamsoft.com to get a valid trial or full license.
-dbr.initLicense(license);
 
 // https://stackoverflow.com/questions/2727167/how-do-you-get-a-list-of-the-names-of-all-files-present-in-a-directory-in-node-j
 function getFiles(dir, files_) {

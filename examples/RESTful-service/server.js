@@ -7,10 +7,8 @@ var server = restify.createServer({
   name: 'MyApp',
 });
 
-var dbr = require('../../src/build/Release/dbr');
-var license = require('../license');
-dbr.initLicense(license);
-var barcodeTypes = 0x3FF | 0x2000000 | 0x4000000 | 0x8000000;  // 1D, PDF417, QRCODE, DataMatrix
+var dbr = require('../../src/config');
+var barcodeTypes = dbr.barcodeTypes;
 
 server.use(restify.bodyParser());
 

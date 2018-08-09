@@ -4,9 +4,10 @@ var express = require('express');
 var fs = require('fs');
 var app = express();
 var path = require('path');
-var dbr = require('../../src/build/Release/dbr');
-var license = require('../license');
 var http = require('http');
+
+var dbr = require('../../src/config');
+var barcodeTypes = dbr.barcodeTypes;
 
 function decodeBarcode(res, fileName, barcodeType) {
     // read barcode using dbr
@@ -82,9 +83,6 @@ app.post('/upload', function (req, res) {
 
     });
 });
-
-// Please visit https://www.dynamsoft.com/CustomerPortal/Portal/Triallicense.aspx or contact support@dynamsoft.com to get a valid trial or full license.
-dbr.initLicense(license);
 
 var server = app.listen(2018, function () {
     var host = server
