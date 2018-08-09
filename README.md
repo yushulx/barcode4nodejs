@@ -58,6 +58,13 @@ node-gyp build
     ```
     node test.js -f test.tif
     ```
+- examples/web
+
+    ```
+    npm install
+    node server.js
+    ```
+    Open `http://localhost:2018/index.htm` in web browsers.
 
 ## Related Articles
 * [How to Wrap Dynamsoft Linux Barcode SDK for Node.js](https://www.codepool.biz/linux-barcode-sdk-node-javascript.html)
