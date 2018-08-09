@@ -1,0 +1,24 @@
+{
+  "name": "DynamsoftBarcodeReader",
+  "version": "1.0.0",
+  "description": "Native desktop application based on Electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yushulx/nodejs-barcode-for-win-linux-mac.git"
+  },
+  "keywords": [
+    "Dynamsoft",
+    "barcode",
+    "reader",
+    "SDK"
+  ],
+  "author": "yushulx",
+  "homepage": "http://www.dynamsoft.com/Products/Dynamic-Barcode-Reader.aspx",
+  "devDependencies": {
+    "electron-prebuilt": "^0.36.0"
+  }
+}

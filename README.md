@@ -66,6 +66,17 @@ node-gyp build
     ```
     Open `http://localhost:2018/index.htm` in web browsers.
 
+- examples/desktop-electron
+
+    ```
+    cd src
+    node-gyp rebuild --target=0.36.7 --arch=x64 --dist-url=https://atom.io/download/atom-shell
+
+    cd examples/desktop-electron
+    npm install
+    npm start
+    ```
+
 ## Related Articles
 * [How to Wrap Dynamsoft Linux Barcode SDK for Node.js](https://www.codepool.biz/linux-barcode-sdk-node-javascript.html)
 * [How to Build Node.js Barcode Reader on Raspberry Pi](https://www.codepool.biz/raspberry-pi-nodejs-barcode-reader.html)
