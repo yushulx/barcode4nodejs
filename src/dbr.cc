@@ -33,7 +33,7 @@ struct BarcodeWorker
 	int height; 					// image height
 	BufferType bufferType;			// buffer type
 	char templateName[128];			// template name
-	const char * pszBase64;			// image as base64 string
+	char * pszBase64;			// image as base64 string
 };
 
 /**
@@ -346,8 +346,7 @@ void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
 	HandleScope scope(isolate);
 
 	// get arguments
-	String::Utf8Value base64(args[0]->ToString());
-	char *pszBase64 = *base64;
+	char* pszBase64 = (char*) node::Buffer::Data(args[0]->ToObject()); // base64 string
 	int iFormat = args[1]->IntegerValue(); // barcode types
 	Local<Function> cb = Local<Function>::Cast(args[2]); // javascript callback function
 	String::Utf8Value templateName(args[3]->ToString()); // template name

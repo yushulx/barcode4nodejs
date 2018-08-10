@@ -60,14 +60,15 @@ server.post('/dbr', function create(req, res, next) {
   // });
   // let image = str(req.body);
   // console.log(image);
-  dbr.decodeBase64Async(req.body, barcodeTypes, function (err, msg) {
+  let data = Buffer.from(req.body);
+  dbr.decodeBase64Async(data, barcodeTypes, function (err, msg) {
     // fs.unlink(file, function (err) {
     //   console.log('Removed cached: ' + file);
     // });
 
     var final_result = "";
     var hasResult = false;
-    for (index in msg) {
+    for (let index in msg) {
       hasResult = true;
       var result = msg[index]
       final_result += "value: " + result['value'] + "; ";
