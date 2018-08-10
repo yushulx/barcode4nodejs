@@ -65,13 +65,12 @@ server.post('/dbr', function create(req, res, next) {
     // fs.unlink(file, function (err) {
     //   console.log('Removed cached: ' + file);
     // });
-
     var final_result = "";
     var hasResult = false;
     for (let index in msg) {
       hasResult = true;
       var result = msg[index]
-      final_result += "value: " + result['value'] + "; ";
+      final_result += result['value'] + "; ";
       console.log(result['format']);
       console.log(result['value']);
       console.log("##################");
