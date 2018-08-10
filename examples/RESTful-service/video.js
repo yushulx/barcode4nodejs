@@ -45,22 +45,6 @@ if (browserRedirect() == 'pc') {
   isPC = false;
 }
 
-// initialize camera infos for Chrome
-function initCameraSource(sourceInfos) {
-  for (var i = 0; i < sourceInfos.length; i++) {
-    var sourceInfo = sourceInfos[i];
-    var option = document.createElement('option');
-    option.value = sourceInfo.id;
-    if (sourceInfo.kind === 'video') {
-      option.text = sourceInfo.label || "Camera " + (videoSelect.length + 1);
-      videoSelect.appendChild(option);
-    } else {
-      console.log("Source info: " + sourceInfo);
-    }
-  }
-  toggleCamera();
-}
-
 // stackoverflow: http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata/5100158
 function dataURItoBlob(dataURI) {
   // convert base64/URLEncoded data component to raw binary data held in a string
@@ -84,37 +68,6 @@ function dataURItoBlob(dataURI) {
   });
 }
 
-function successCallback(stream) {
-  window.stream = stream;
-  videoElement.src = window.URL.createObjectURL(stream);
-  videoElement.play();
-}
-
-function errorCallback(error) {
-  console.log("Error: " + error);
-}
-
-function startCamera(constraints) {
-  if (navigator.getUserMedia) {
-    navigator.getUserMedia(constraints, successCallback, errorCallback);
-  } else {
-    console.log("getUserMedia not supported");
-  }
-}
-
-function toggleCamera() {
-  var videoSource = videoSelect.value;
-  var constraints = {
-    video: {
-      optional: [{
-        sourceId: videoSource
-      }]
-    }
-  };
-
-  startCamera(constraints);
-}
-
 // add button event
 buttonGo.onclick = function () {
   if (isPC) {
@@ -127,24 +80,6 @@ buttonGo.onclick = function () {
   scanBarcode();
   buttonGo.disabled = true;
 };
-
-// query supported Web browsers
-if (navigator.getUserMedia || navigator.mozGetUserMedia) {
-  navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia;
-  startCamera({
-    video: {
-      // mandatory: {
-      //   maxWidth: 640,
-      //   maxHeight: 480
-      // }
-    }
-  });
-} else if (navigator.webkitGetUserMedia) {
-  videoOption.style.display = 'block';
-  navigator.getUserMedia = navigator.webkitGetUserMedia;
-  MediaStreamTrack.getSources(initCameraSource);
-  videoSelect.onchange = toggleCamera;
-}
 
 // scan barcode
 function scanBarcode() {
@@ -205,3 +140,51 @@ function scanBarcode() {
   });
 }
 
+// https://github.com/samdutton/simpl/tree/gh-pages/getusermedia/sources 
+navigator.mediaDevices.enumerateDevices()
+  .then(gotDevices).then(getStream).catch(handleError);
+
+videoSelect.onchange = getStream;
+
+function gotDevices(deviceInfos) {
+  for (var i = deviceInfos.length - 1; i >= 0; --i) {
+    var deviceInfo = deviceInfos[i];
+    var option = document.createElement('option');
+    option.value = deviceInfo.deviceId;
+    if (deviceInfo.kind === 'videoinput') {
+      option.text = deviceInfo.label || 'camera ' +
+        (videoSelect.length + 1);
+      videoSelect.appendChild(option);
+    } else {
+      console.log('Found one other kind of source/device: ', deviceInfo);
+    }
+  }
+}
+
+function getStream() {
+  if (window.stream) {
+    window.stream.getTracks().forEach(function (track) {
+      track.stop();
+    });
+  }
+
+  var constraints = {
+    video: {
+      deviceId: {
+        exact: videoSelect.value
+      }
+    }
+  };
+
+  navigator.mediaDevices.getUserMedia(constraints).
+  then(gotStream).catch(handleError);
+}
+
+function gotStream(stream) {
+  window.stream = stream; 
+  videoElement.srcObject = stream;
+}
+
+function handleError(error) {
+  console.log('Error: ', error);
+}
