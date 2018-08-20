@@ -133,13 +133,10 @@ static void DetectionWorking(uv_work_t *req)
 	
 	if (ret) 
 	{
-		printf("Detection error code: %d\n", ret);
+		printf("Detection error: %s\n", DBR_GetErrorString(ret));
 	}
-	else
-	{
-		DBR_GetAllTextResults(hBarcode, &pResults);
-	}
-		
+
+	DBR_GetAllTextResults(hBarcode, &pResults);
 
 	// save results to BarcodeWorker
 	worker->errorCode = ret;

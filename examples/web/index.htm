@@ -4,6 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Dynamsoft Barcode Reader Nodejs Demo</title>
     <link type="text/css" rel="stylesheet" href="assets/css/style.css" />
+    <script src='jquery-1.11.3.min.js'></script>
     <script type="text/javascript">
 
 
@@ -151,6 +152,16 @@
                             <span>DataMatrix</span><br />
                             <div class="imgWrapper">
                                 <img src="assets/images/dm.gif" width="60" alt="Barcode Type DataMatrix" /></div>
+                        </label>
+                    </li>
+                    <li>
+                        <label for="chkDataMatrix">
+                            <input id="chkDataMatrix" name="BarcodeType" type="checkbox" value="0x10000000">
+                            <span>Aztec Code</span>
+                            <br />
+                            <div class="imgWrapper">
+                                <img src="assets/images/aztec.png" width="60" alt="Aztec Code" />
+                            </div>
                         </label>
                     </li>
                 </ul>
