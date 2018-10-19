@@ -28,7 +28,7 @@ Change directory to **src**.
 cd src
 ```
 
-Edit `binding.gyp`. Replace `E:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.3\\Components\\C_C++\\Lib\\DBRx64.lib` and `E:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.3\\Components\\C_C++\\Redist\\x64\\` with yours.
+Edit `binding.gyp`. Replace `E:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Components\\C_C++\\Lib\\DBRx64.lib` and `E:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Components\\C_C++\\Redist\\x64\\` with yours.
 
 Build the Node.js extension:
 
