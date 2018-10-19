@@ -34,13 +34,13 @@
                         "./"
                     ],
                     'libraries': [
-                        "-lE:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.3\\Components\\C_C++\\Lib\\DBRx64.lib"
+                        "-lE:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Components\\C_C++\\Lib\\DBRx64.lib"
                     ],
                     'copies': [
                         {
                             'destination': 'build/Release/',
                             'files': [
-                                'E:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.3\\Components\\C_C++\\Redist\\x64\\'
+                                'E:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Components\\C_C++\\Redist\\x64\\'
                             ]
                         }
                     ]
