@@ -1,0 +1,12 @@
+{
+  "Version": "2.0",
+  "ImageParameter": {
+    "Name": "Custom_143301_827",
+    "BarcodeFormatIds": [
+      "OneD"
+    ],
+    "ExpectedBarcodesCount": 9,
+    "ScaleDownThreshold": 1200000,
+    "BinarizationBlockSize": 5
+  }
+}

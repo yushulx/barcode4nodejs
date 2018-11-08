@@ -21,7 +21,7 @@ Get the [trial license](https://www.dynamsoft.com/CustomerPortal/Portal/Triallic
     npm i node-gyp -g
     ```
 
-## HowTo
+## How to Build
 ### Windows
 Change directory to **src**.
 ```
@@ -92,6 +92,43 @@ node-gyp build
     ```
     
     Open `https://< ip >:2018` to scan barcodes in web browsers.
+
+## Template Settings
+https://www.dynamsoft.com/help/Barcode-Reader/devguide/Template/TemplateSettingsList.html
+
+## How to Set Barcode Types
+
+The simplest way to set barcode types:
+
+```javascript
+var barcodeTypes = dbr.formats.OneD;
+decodeFileAsync(fileName, barcodeTypes, callback);
+```
+
+Alternatively, you can use template:
+
+```javascript
+// From file
+template = fs.readFileSync("<template file>");
+
+// From JSON object
+let params = {
+    "Version": "2.0",
+    "ImageParameter": {
+      "Name": "Custom_143301_827",
+      "BarcodeFormatIds": [
+        "PDF417"
+      ],
+      "ExpectedBarcodesCount": 9,
+      "ScaleDownThreshold": 1200000,
+      "BinarizationBlockSize": 5
+    }
+  };
+template = JSON.stringify(params);
+
+decodeFileAsync(fileName, 0, callback, template);
+```
+
 
 ## Related Articles
 * [How to Wrap Dynamsoft Linux Barcode SDK for Node.js](https://www.codepool.biz/linux-barcode-sdk-node-javascript.html)

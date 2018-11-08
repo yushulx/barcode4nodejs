@@ -32,8 +32,8 @@ struct BarcodeWorker
 	int width;						// image width
 	int height; 					// image height
 	BufferType bufferType;			// buffer type
-	char templateName[128];			// template name
 	char * pszBase64;			// image as base64 string
+	bool useTemplate;
 };
 
 /**
@@ -63,6 +63,13 @@ static void destroyDBR()
     }
 }
 
+static bool hasTemplate(const char* pszTemplate) {
+	if (!strcmp(pszTemplate, "undefined") || !strcmp(pszTemplate, "")) {
+		return false;
+	}
+	return true;
+}
+
 /*
  *	uv_work_cb
  */
@@ -77,11 +84,13 @@ static void DetectionWorking(uv_work_t *req)
     BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
 
 	// Update DBR params
-	PublicParameterSettings pSettings = {};
-	DBR_GetTemplateSettings(hBarcode, worker->templateName, &pSettings);
-	pSettings.mBarcodeFormatIds = worker->iFormat;
-	char szErrorMsgBuffer[256];
-	DBR_SetTemplateSettings(hBarcode, "", &pSettings, szErrorMsgBuffer, 256);
+	if (!worker->useTemplate) {
+		PublicParameterSettings pSettings = {};
+		DBR_GetTemplateSettings(hBarcode, "", &pSettings);
+		pSettings.mBarcodeFormatIds = worker->iFormat;
+		char szErrorMsgBuffer[256];
+		DBR_SetTemplateSettings(hBarcode, "", &pSettings, szErrorMsgBuffer, 256);
+	}
 
 	// initialize Dynamsoft Barcode Reader
 	STextResultArray *pResults = NULL;
@@ -92,8 +101,9 @@ static void DetectionWorking(uv_work_t *req)
 	{
 		case FILE_STREAM:
 			{
-				if (worker->buffer)
-					ret = DBR_DecodeFileInMemory(hBarcode, worker->buffer, worker->size, worker->templateName);
+				if (worker->buffer) {
+					ret = DBR_DecodeFileInMemory(hBarcode, worker->buffer, worker->size, "");
+				}
 			}
 			break;
 		case YUYV_BUFFER:
@@ -111,7 +121,7 @@ static void DetectionWorking(uv_work_t *req)
 						index += 2;
 					}
 					// read barcode
-					ret = DBR_DecodeBuffer(hBarcode, data, width, height, width, IPF_GrayScaled, worker->templateName);
+					ret = DBR_DecodeBuffer(hBarcode, data, width, height, width, IPF_GrayScaled, "");
 					// release memory
 					delete []data, data=NULL;
 				}
@@ -121,13 +131,13 @@ static void DetectionWorking(uv_work_t *req)
 			{
 				if (worker->pszBase64) 
 				{
-					ret = DBR_DecodeBase64String(hBarcode, worker->pszBase64, worker->templateName);
+					ret = DBR_DecodeBase64String(hBarcode, worker->pszBase64, "");
 				}
 			}
 			break;
 		default:
 			{
-				ret = DBR_DecodeFile(hBarcode, worker->filename, worker->templateName);
+				ret = DBR_DecodeFile(hBarcode, worker->filename, "");
 			}
 	}
 	
@@ -244,7 +254,16 @@ void DecodeFileAsync(const FunctionCallbackInfo<Value>& args)
 	worker->pResults = NULL;
 	worker->buffer = NULL;
 	worker->bufferType = NO_BUFFER;
-	strcpy(worker->templateName, pTemplateName);
+	
+	if (hasTemplate(pTemplateName)) {
+		// Load the template.
+		char szErrorMsg[256];
+		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, ECM_Overwrite, szErrorMsg, 256);
+		worker->useTemplate = true;
+	}
+	else {
+		worker->useTemplate = false;
+	}
 	
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
 }
@@ -276,7 +295,16 @@ void DecodeFileStreamAsync(const FunctionCallbackInfo<Value>& args)
 	worker->buffer = buffer;
 	worker->size = fileSize;
 	worker->bufferType = FILE_STREAM;
-	strcpy(worker->templateName, pTemplateName);
+	
+	if (hasTemplate(pTemplateName)) {
+		// Load the template.
+		char szErrorMsg[256];
+		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, ECM_Overwrite, szErrorMsg, 256);
+		worker->useTemplate = true;
+	}
+	else {
+		worker->useTemplate = false;
+	}
 	
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
 }
@@ -309,28 +337,18 @@ void DecodeYUYVAsync(const FunctionCallbackInfo<Value>& args) {
 	worker->width = width;
 	worker->height = height;
 	worker->bufferType = YUYV_BUFFER;
-	strcpy(worker->templateName, pTemplateName);
+	
+	if (hasTemplate(pTemplateName)) {
+		// Load the template.
+		char szErrorMsg[256];
+		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, ECM_Overwrite, szErrorMsg, 256);
+		worker->useTemplate = true;
+	}
+	else {
+		worker->useTemplate = false;
+	}
 
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
-}
-
-/*
- *	Load parameter templates for detecting barcodes.
- */
-void LoadTemplates(const FunctionCallbackInfo<Value>& args) 
-{
-	if (!createDBR()) {return;}
-
-	Isolate* isolate = Isolate::GetCurrent();
-	HandleScope scope(isolate);
-
-	// Get arguments.
-	String::Utf8Value fileName(args[0]->ToString()); // file name
-	char *pszFileName = *fileName;
-
-	// Load the template file.
-	char szErrorMsg[256];
-	DBR_LoadSettingsFromFile(hBarcode, pszFileName, szErrorMsg, 256);
 }
 
 /*
@@ -357,7 +375,16 @@ void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
 	worker->pResults = NULL;
 	worker->pszBase64 = pszBase64;
 	worker->bufferType = BASE64;
-	strcpy(worker->templateName, pTemplateName);
+
+	if (hasTemplate(pTemplateName)) {
+		// Load the template.
+		char szErrorMsg[256];
+		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, ECM_Overwrite, szErrorMsg, 256);
+		worker->useTemplate = true;
+	}
+	else {
+		worker->useTemplate = false;
+	}
 
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
 }
@@ -369,7 +396,6 @@ void Init(Handle<Object> exports) {
 	NODE_SET_METHOD(exports, "decodeFileStreamAsync", DecodeFileStreamAsync);
 	NODE_SET_METHOD(exports, "initLicense", InitLicense);
 	NODE_SET_METHOD(exports, "decodeFileAsync", DecodeFileAsync);
-	NODE_SET_METHOD(exports, "loadTemplates", LoadTemplates);
 	NODE_SET_METHOD(exports, "decodeBase64Async", DecodeBase64Async);
 }
 

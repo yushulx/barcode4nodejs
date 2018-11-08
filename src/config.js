@@ -2,7 +2,7 @@ var license = '';
 
 if (process.platform === 'win32') {
     console.log('Windows');
-    license = 't0068NQAAAGWe/zXkYmggvyFrd8PmfjplKakH67Upt9HvuRDIBAV6MZ4uODuL1ZUgSEAOygejsfwj6XRKI5iD1tLKZBRGo2c=';
+    license = 't0068NQAAACqUjZa21C+W7fRdPkf2FRFRr+QpfVC2tDsl/8t25TzYCNxl5s0OkuwFgEMGNfN95Z0HYQ55ROi1px9JqVAP7/c=';
 }
 else if(process.platform === 'linux') {
     console.log('Linux');
@@ -17,7 +17,15 @@ else {
 }
 
 var dbr = require('./build/Release/dbr');
-var barcodeTypes = 0x3FF | 0x2000000 | 0x4000000 | 0x8000000 | 0x10000000;  // 1D, PDF417, QRCODE, DataMatrix, Aztec Code
+var formats = {
+    'OneD': 0x3FF,
+    'PDF417': 0x2000000,
+    'QRCode': 0x4000000,
+    'DataMatrix': 0x8000000,
+    'Aztec': 0x10000000
+}
+
+var barcodeTypes = formats.OneD | formats.PDF417 | formats.QRCode | formats.DataMatrix | formats.Aztec;  // 1D, PDF417, QRCODE, DataMatrix, Aztec Code
 
 // Initialize DBR license.
 // Please visit https://www.dynamsoft.com/CustomerPortal/Portal/Triallicense.aspx or contact support@dynamsoft.com to get a valid trial or full license.
@@ -28,5 +36,6 @@ module.exports = {
     decodeFileStreamAsync: dbr.decodeFileStreamAsync,
     decodeBase64Async: dbr.decodeBase64Async,
     decodeYUYVAsync: dbr.decodeYUYVAsync,
+    formats: formats,
     barcodeTypes: barcodeTypes
 };
