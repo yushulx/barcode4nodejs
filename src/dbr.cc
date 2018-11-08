@@ -333,6 +333,21 @@ void LoadTemplates(const FunctionCallbackInfo<Value>& args)
 	DBR_LoadSettingsFromFile(hBarcode, pszFileName, szErrorMsg, 256);
 }
 
+void InitRuntimeSettingsWithFile(const FunctionCallbackInfo<Value>& args) 
+{
+	if (!createDBR()) {return;}
+
+	Isolate* isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+
+	// Get arguments.
+	String::Utf8Value fileName(args[0]->ToString()); // file name
+	char *pszFileName = *fileName;
+
+	char szErrorMsg[256];
+	DBR_InitRuntimeSettingsWithFile(hBarcode, pszFileName, ECM_Overwrite, szErrorMsg, 256);
+}
+
 /*
  *	decodeBase64Async(base64, barcodeTypes, callback)
  */
