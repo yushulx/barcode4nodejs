@@ -386,6 +386,7 @@ void Init(Handle<Object> exports) {
 	NODE_SET_METHOD(exports, "decodeFileAsync", DecodeFileAsync);
 	NODE_SET_METHOD(exports, "loadTemplates", LoadTemplates);
 	NODE_SET_METHOD(exports, "decodeBase64Async", DecodeBase64Async);
+	NODE_SET_METHOD(exports, "initRuntimeSettingsWithFile",InitRuntimeSettingsWithFile);
 }
 
 NODE_MODULE(dbr, Init)
