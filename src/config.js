@@ -37,5 +37,6 @@ module.exports = {
     decodeBase64Async: dbr.decodeBase64Async,
     decodeYUYVAsync: dbr.decodeYUYVAsync,
     formats: formats,
+    initLicense: dbr.initLicense,
     barcodeTypes: barcodeTypes
 };
