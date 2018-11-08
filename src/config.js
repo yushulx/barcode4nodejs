@@ -28,5 +28,6 @@ module.exports = {
     decodeFileStreamAsync: dbr.decodeFileStreamAsync,
     decodeBase64Async: dbr.decodeBase64Async,
     decodeYUYVAsync: dbr.decodeYUYVAsync,
+    initRuntimeSettingsWithFile: dbr.initRuntimeSettingsWithFile,
     barcodeTypes: barcodeTypes
 };
