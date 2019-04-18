@@ -101,10 +101,9 @@
 /*
 *	@file DynamsoftBarcodeReader.h
 *	
-*	Dynamsoft Barcode Reader 6.4 C/C++ API header file.
+*	Dynamsoft Barcode Reader C/C++ API header file.
 *	Copyright 2018 Dynamsoft Corporation. All rights reserved.
 *	
-*	@version 6.4.0.919
 *	@author Dynamsoft
 *	@date 19/09/2018
 */
@@ -132,9 +131,9 @@ typedef void* HANDLE;
 /**
 * @defgroup CandCPlus C/C++ APIs
 * @{
-* Dynamsoft Barcode Reaeder 6.4.0 - C/C++ APIs Description.
+* Dynamsoft Barcode Reaeder 6.5.1 - C/C++ APIs Description.
 */
-#define DBR_VERSION                  "6.4.0.919"
+#define DBR_VERSION                  "6.5.1.0319"
 
 /**
  * @defgroup ErrorCode ErrorCode
@@ -351,8 +350,12 @@ typedef enum
 	/**< 16bit */
 	IPF_RGB_888,		
 	/**< 24bit */
-	IPF_ARGB_8888		
-	/**< 32bit */		
+	IPF_ARGB_8888,
+	/**< 32bit */
+	IPF_RGB_161616,
+	/**< 48bit */
+	IPF_ARGB_16161616
+	/**< 64bit */ 
 }ImagePixelFormat;
 
 
@@ -809,7 +812,7 @@ typedef struct tagPublicRuntimeSettings
 
 
     int mMaxDimOfFullImageAsBarcodeZone;
-	/**< Sets the maximum image dimension (in pixels) to localize barcode on the full image. If the image dimension is smaller than the given value, the library will localize barcode on the full image. Otherwise, "FullImageAsBarcodeZone" mode will not be enabled and we will only localize barcodes within the dimension provided.
+	/**< Sets the maximum image dimension (in pixels) to localize barcode on the full image. If the image dimension is smaller than the given value, the library will localize barcode on the full image. Otherwise, "FullImageAsBarcodeZone" mode will not be enabled.
 	 * 
 	 * @par Value range:
 	 * 		[262144,0x7fffffff]
@@ -1114,7 +1117,7 @@ typedef struct tagPublicParameterSettings
 
 
 	int mMaxDimOfFullImageAsBarcodeZone;
-	/**< Sets the maximum image dimension (in pixels) to localize barcode on the full image. If the image dimension is smaller than the given value, the library will localize barcode on the full image. Otherwise, "FullImageAsBarcodeZone" mode will not be enabled and we will only localize barcodes within the dimension provided.
+	/**< Sets the maximum image dimension (in pixels) to localize barcode on the full image. If the image dimension is smaller than the given value, the library will localize barcode on the full image. Otherwise, "FullImageAsBarcodeZone" mode will not be enabled.
 	*
 	* @par Value range:
 	* 		[262144,0x7fffffff]
@@ -1270,7 +1273,7 @@ typedef struct tagPublicParameterSettings
 #ifdef __cplusplus
 /** . */
 extern "C" {
-#endif
+#endif // endif of __cplusplus.
 	/**
 	* @defgroup CFunctions C Functions
 	* @{
@@ -1367,7 +1370,7 @@ extern "C" {
 	 * 		   DBR_GetErrorString to get detail message.
 	 */
 	DBR_API int DBR_InitLicenseFromLicenseContent(void* hBarcodeReader, const char* pszLicenseKey, const char* pszLicenseContent);
-
+	
 	/**
 	 * Initializes barcode reader license from the license content on the mobile device for offline verification.
 	 *
@@ -1379,7 +1382,7 @@ extern "C" {
 	 * @return Returns error code. Returns 0 if the function completed successfully, otherwise call
 	 * 		   DBR_GetErrorString to get detail message.
 	 */
-	DBR_API int DBR_InitLicenseFromLicenseContentEx(void* hBarcodeReader, const char* pszLicenseKey, const char* pszMachineID, const char* pszLicenseContent);
+	DBR_API int DBR_InitLicenseFromLicenseContentEx(void* hBarcodeReader, const char* pszLicenseKey, const char* pszMachineID, const char* pszLicenseContent, int* bIfNeedUpdateLicense);
 
 	/**
 	 * Outputs the license content as an encrypted string from the license server to be used for offline license verification.
@@ -1408,7 +1411,7 @@ extern "C" {
 	 * @code
 			void* hBarcodeReader = DBR_CreateInstance();
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
-			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			DBR_DestroyInstance(hBarcodeReader);
 	 * @endcode
 	 */
@@ -1432,7 +1435,7 @@ extern "C" {
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			unsigned char* pFileBytes;
 			int nFileSize = 0;
-			GetFileStream("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", &pFileBytes, &nFileSize);
+			GetFileStream("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", &pFileBytes, &nFileSize);
 			int errorCode = DBR_DecodeFileInMemory(hBarcodeReader, pFileBytes, nFileSize, "");
 			DBR_DestroyInstance(hBarcodeReader);
 	 * @endcode
@@ -1462,7 +1465,7 @@ extern "C" {
 			int iHeight = 0;
 			int iStride = 0;
 			ImagePixelFormat format;
-			GetBufferFromFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", &pBufferBytes, &iWidth, &iHeight, &iStride, &format);
+			GetBufferFromFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", &pBufferBytes, &iWidth, &iHeight, &iStride, &format);
 			int errorCode = DBR_DecodeBuffer(hBarcodeReader, pBufferBytes, iWidth, iHeight, iStride, format, "");
 			DBR_DestroyInstance(hBarcodeReader);
 	 * @endcode
@@ -1485,7 +1488,7 @@ extern "C" {
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			unsigned char* pBufferBytes;
 			int nFileSize = 0;
-			GetFileStream("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", &pFileBytes, &nFileSize);
+			GetFileStream("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", &pFileBytes, &nFileSize);
 			char* strBase64String;
 			GetFileBase64String(pBufferBytes, &strBase64String);
 			int errorCode = DBR_DecodeBase64String(hBarcodeReader, strBase64String, "");
@@ -1509,7 +1512,7 @@ extern "C" {
 			void* hBarcodeReader = DBR_CreateInstance();
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			HANDLE pDIB;
-			GetDIBFromImage("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", &pDIB);
+			GetDIBFromImage("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", &pDIB);
 			int errorCode = DBR_DecodeDIB(hBarcodeReader, pDIB, "");
 			DBR_DestroyInstance(hBarcodeReader);
 	 * @endcode
@@ -1532,7 +1535,7 @@ extern "C" {
 			void* hBarcodeReader = DBR_CreateInstance();
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			STextResultArray* pResults;
-			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			DBR_GetAllTextResults(hBarcodeReader, &pResults);
 			DBR_FreeTextResults(&pResults);
 			DBR_DestroyInstance(hBarcodeReader);
@@ -1557,7 +1560,7 @@ extern "C" {
 			void* hBarcodeReader = DBR_CreateInstance();
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			SLocalizationResultArray* pLocResults;
-			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			DBR_GetAllLocalizationResults(hBarcodeReader, &pLocResults);
 			DBR_FreeLocalizationResults(&pLocResults);
 			DBR_DestroyInstance(hBarcodeReader);
@@ -1576,7 +1579,7 @@ extern "C" {
 			void* hBarcodeReader = DBR_CreateInstance();
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			STextResultArray* pResults;
-			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			DBR_GetAllTextResults(hBarcodeReader, &pResults);
 			DBR_FreeTextResults(&pResults);
 			DBR_DestroyInstance(hBarcodeReader);
@@ -1594,7 +1597,7 @@ extern "C" {
 			void* hBarcodeReader = DBR_CreateInstance();
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			SLocalizationResultArray* pLocResults;
-			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			DBR_GetAllLocalizationResults(hBarcodeReader, &pLocResults);
 			DBR_FreeLocalizationResults(&pLocResults);
 			DBR_DestroyInstance(hBarcodeReader);
@@ -1613,7 +1616,7 @@ extern "C" {
 	 * @code
 			void* hBarcodeReader = DBR_CreateInstance();
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
-			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = DBR_DecodeFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			const char* errorString = DBR_GetErrorString(errorCode);
 			DBR_DestroyInstance(hBarcodeReader);
 	 * @endcode
@@ -1732,7 +1735,7 @@ extern "C" {
 			void* hBarcodeReader = DBR_CreateInstance();
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			char errorMessage[256];
-			DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessage, 256);
+			DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessage, 256);
 			DBR_DestroyInstance(hBarcodeReader);
 	* @endcode
 	*
@@ -1786,7 +1789,7 @@ extern "C" {
 			void* hBarcodeReader = DBR_CreateInstance();
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			char errorMessage[256];
-			DBR_AppendTplFileToRuntimeSettings(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Ignore, errorMessage, 256);
+			DBR_AppendTplFileToRuntimeSettings(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Ignore, errorMessage, 256);
 			DBR_DestroyInstance(hBarcodeReader);
 	* @endcode
 	*
@@ -1834,7 +1837,7 @@ extern "C" {
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			char errorMessageInit[256];
 			char errorMessageAppend[256];
-			DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
+			DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
 			DBR_AppendTplStringToRuntimeSettings(hBarcodeReader, "{\"Version\":\"2.0\", \"ImageParameter\":{\"Name\":\"IP1\", \"BarcodeFormatIds\":[\"QR_CODE\"], \"ExpectedBarcodesCount\":10, \"AntiDamageLevel\":3}}", ECM_Ignore, errorMessageAppend, 256);
 			int currentTemplateCount = DBR_GetParameterTemplateCount(hBarcodeReader);
 			DBR_DestroyInstance(hBarcodeReader);
@@ -1861,7 +1864,7 @@ extern "C" {
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			char errorMessageInit[256];
 			char errorMessageAppend[256];
-			DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
+			DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
 			DBR_AppendTplStringToRuntimeSettings(hBarcodeReader, "{\"Version\":\"2.0\", \"ImageParameter\":{\"Name\":\"IP1\", \"BarcodeFormatIds\":[\"QR_CODE\"], \"ExpectedBarcodesCount\":10, \"AntiDamageLevel\":3}}", ECM_Ignore, errorMessageAppend, 256);
 			int currentTemplateCount = DBR_GetParameterTemplateCount(hBarcodeReader);
 			int templateIndex = 2;
@@ -1891,7 +1894,7 @@ extern "C" {
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			char errorMessageInit[256];
 			char errorMessageAppend[256];
-			 DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
+			 DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
 			DBR_AppendTplStringToRuntimeSettings(hBarcodeReader, "{\"Version\":\"2.0\", \"ImageParameter\":{\"Name\":\"IP1\", \"BarcodeFormatIds\":[\"QR_CODE\"], \"ExpectedBarcodesCount\":10, \"AntiDamageLevel\":3}}", ECM_Ignore, errorMessageAppend, 256);
 			char pszContent[256];
 			DBR_OutputSettingsToString(hBarcodeReader, pszContent, 256, "currentRuntimeSettings");
@@ -1917,9 +1920,9 @@ extern "C" {
 			DBR_InitLicense(hBarcodeReader, "t0260NwAAAHV***************");
 			char errorMessageInit[256];
 			char errorMessageAppend[256];
-			DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
+			DBR_InitRuntimeSettingsWithFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
 			DBR_AppendTplStringToRuntimeSettings(hBarcodeReader, "{\"Version\":\"2.0\", \"ImageParameter\":{\"Name\":\"IP1\", \"BarcodeFormatIds\":[\"QR_CODE\"], \"ExpectedBarcodesCount\":10, \"AntiDamageLevel\":3}}", ECM_Ignore, errorMessageAppend, 256);
-			DBR_OutputSettingsToFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\CurrentRuntimeSettings.json", "currentRuntimeSettings");
+			DBR_OutputSettingsToFile(hBarcodeReader, "C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\CurrentRuntimeSettings.json", "currentRuntimeSettings");
 			DBR_DestroyInstance(hBarcodeReader);
 	 * @endcode
 	 *
@@ -2042,15 +2045,18 @@ extern "C" {
 	 */
 	DBR_API int DBR_SetTemplateSettings(void* hBarcodeReader,const char*pszTemplateName,PublicParameterSettings *pSettings,char szErrorMsgBuffer[],int nErrorMsgBufferLen);
 
+	DBR_API int DBR_SetMaxFrameCount(void* hBarcodeReader, int nMaxFrameCount);
+
+	DBR_API int DBR_SetRemainingFrameCount(void* hBarcodeReader, int nRemainingFrameCount);
+
 
 	/**
 	 * @}
 	 * @} 
 	 */
-
 #ifdef __cplusplus
 }
-#endif
+#endif //endif of __cplusplus
 
 //---------------------------------------------------------------------------
 // Class
@@ -2169,7 +2175,7 @@ public:
 	 * @return Returns error code. Returns 0 if the function completed successfully, otherwise call
 	 * 		   GetErrorString to get detail message.
 	 */
-	int InitLicenseFromLicenseContentEx(const char* pszLicenseKey, const char* pszMachineID, const char* pszLicenseContent);
+	int InitLicenseFromLicenseContentEx(const char* pszLicenseKey, const char* pszLicenseContent, const char* pszMachineID, int* bIfNeedUpdateLicense);
 
 	/**
 	 * Outputs the license content as an encrypted string from the license server to be used for offline license verification.
@@ -2195,7 +2201,7 @@ public:
 	 * @code
 			CBarcodeReader* reader = new CBarcodeReader();
 			reader->InitLicense("t0260NwAAAHV***************");
-			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			delete reader;
 	 * @endcode
 	 *
@@ -2220,7 +2226,7 @@ public:
 			reader->InitLicense("t0260NwAAAHV***************");
 			unsigned char* pFileBytes;
 			int nFileSize = 0;
-			GetFileStream("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", &pFileBytes, &nFileSize);
+			GetFileStream("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", &pFileBytes, &nFileSize);
 			int errorCode = reader->DecodeFileInMemory(pFileBytes, nFileSize, "");
 			delete reader;
 	 * @endcode
@@ -2252,7 +2258,7 @@ public:
 			int iHeight = 0;
 			int iStride = 0;
 			ImagePixelFormat format;
-			GetBufferFromFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", &pBufferBytes, &iWidth, &iHeight, &iStride, &format);
+			GetBufferFromFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", &pBufferBytes, &iWidth, &iHeight, &iStride, &format);
 			int errorCode = reader->DecodeBuffer(pBufferBytes, iWidth, iHeight, iStride, format, "");
 			delete reader;
 	 * @endcode
@@ -2277,7 +2283,7 @@ public:
 			reader->InitLicense("t0260NwAAAHV***************");
 			unsigned char* pFileBytes;
 			int nFileSize = 0;
-			GetFileStream("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", &pFileBytes, &nFileSize);
+			GetFileStream("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", &pFileBytes, &nFileSize);
 			char* strBase64String;
 			GetFileBase64String(pBufferBytes, &strBase64String);
 			int errorCode = reader->DecodeBase64String(strBase64String, "");
@@ -2303,7 +2309,7 @@ public:
 			CBarcodeReader* reader = new CBarcodeReader();
 			reader->InitLicense("t0260NwAAAHV***************");
 			HANDLE pDIB;
-			GetDIBFromImage("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", &pDIB);
+			GetDIBFromImage("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", &pDIB);
 			int errorCode = reader->DecodeDIB(pDIB "");
 			delete reader;
 	 * @endcode
@@ -2328,7 +2334,7 @@ public:
 			CBarcodeReader* reader = new CBarcodeReader();
 			reader->InitLicense("t0260NwAAAHV***************");
 			STextResultArray* pResults;
-			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			reader->GetAllTextResults(&pResults);
 			CBarcodeReader::FreeTextResults(&pResults);
 			delete reader;
@@ -2353,7 +2359,7 @@ public:
 			CBarcodeReader* reader = new CBarcodeReader();
 			reader->InitLicense("t0260NwAAAHV***************");
 			SLocalizationResultArray* pLocResults;
-			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			reader->GetAllLocalizationResults(&pLocResults);
 			CBarcodeReader::FreeLocalizationResults(&pLocResults);
 			delete reader;
@@ -2372,7 +2378,7 @@ public:
 			CBarcodeReader* reader = new CBarcodeReader();
 			reader->InitLicense("t0260NwAAAHV***************");
 			STextResultArray* pResults;
-			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			reader->GetAllTextResults(&pResults);
 			CBarcodeReader::FreeTextResults(&pResults);
 			delete reader;
@@ -2391,7 +2397,7 @@ public:
 			CBarcodeReader* reader = new CBarcodeReader();
 			reader->InitLicense("t0260NwAAAHV***************");
 			SLocalizationResultArray* pLocResults;
-			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			reader->GetAllLocalizationResults(&pLocResults);
 			CBarcodeReader::FreeLocalizationResults(&pLocResults);
 			delete reader;
@@ -2411,7 +2417,7 @@ public:
 	 * @code
 			CBarcodeReader* reader = new CBarcodeReader();
 			reader->InitLicense("t0260NwAAAHV***************");
-			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Images\\AllSupportedBarcodeTypes.tif", "");
+			int errorCode = reader->DecodeFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Images\\AllSupportedBarcodeTypes.tif", "");
 			const char* errorString = CBarcodeReader::GetErrorString(errorCode);
 			delete reader;
 	 * @endcode
@@ -2506,8 +2512,6 @@ public:
 	*/
 	int ResetRuntimeSettings();
 
-
-
 	/**
      * @}
 	 * 
@@ -2533,7 +2537,7 @@ public:
 			CBarcodeReader* reader = new CBarcodeReader();
 			reader->InitLicense("t0260NwAAAHV***************");
 			char errorMessage[256];
-			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessage, 256);
+			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessage, 256);
 			delete reader;
 	* @endcode
 	*
@@ -2585,7 +2589,7 @@ public:
 			CBarcodeReader* reader = new CBarcodeReader();
 			reader->InitLicense("t0260NwAAAHV***************");
 			char errorMessage[256];
-			reader->AppendTplFileToRuntimeSettings("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Ignore, errorMessage, 256);
+			reader->AppendTplFileToRuntimeSettings("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Ignore, errorMessage, 256);
 			delete reader;
 	* @endcode
 	*
@@ -2630,7 +2634,7 @@ public:
 			reader->InitLicense("t0260NwAAAHV***************");
 			char errorMessageInit[256];
 			char errorMessageAppend[256];
-			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
+			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
 			reader->AppendTplStringToRuntimeSettings("{\"Version\":\"2.0\", \"ImageParameter\":{\"Name\":\"IP1\", \"BarcodeFormatIds\":[\"QR_CODE\"], \"ExpectedBarcodesCount\":10, \"AntiDamageLevel\":3}}", ECM_Ignore, errorMessageAppend, 256);
 			int currentTemplateCount = reader->GetParameterTemplateCount();
 			delete reader;
@@ -2656,7 +2660,7 @@ public:
 			reader->InitLicense("t0260NwAAAHV***************");
 			char errorMessageInit[256];
 			char errorMessageAppend[256];
-			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
+			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
 			reader->AppendTplStringToRuntimeSettings("{\"Version\":\"2.0\", \"ImageParameter\":{\"Name\":\"IP1\", \"BarcodeFormatIds\":[\"QR_CODE\"], \"ExpectedBarcodesCount\":10, \"AntiDamageLevel\":3}}", ECM_Ignore, errorMessageAppend, 256);
 			int currentTemplateCount = reader->GetParameterTemplateCount();
 			int templateIndex = 2;
@@ -2685,9 +2689,9 @@ public:
 			reader->InitLicense("t0260NwAAAHV***************");
 			char errorMessageInit[256];
 			char errorMessageAppend[256];
-			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
+			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
 			reader->AppendTplStringToRuntimeSettings("{\"Version\":\"2.0\", \"ImageParameter\":{\"Name\":\"IP1\", \"BarcodeFormatIds\":[\"QR_CODE\"], \"ExpectedBarcodesCount\":10, \"AntiDamageLevel\":3}}", ECM_Ignore, errorMessageAppend, 256);
-			reader->OutputSettingsToFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\CurrentRuntimeSettings.json", "currentRuntimeSettings");
+			reader->OutputSettingsToFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\CurrentRuntimeSettings.json", "currentRuntimeSettings");
 			delete reader;
 	* @endcode
 	*
@@ -2711,7 +2715,7 @@ public:
 			reader->InitLicense("t0260NwAAAHV***************");
 			char errorMessageInit[256];
 			char errorMessageAppend[256];
-			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 6.4\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
+			reader->InitRuntimeSettingsWithFile("C:\\Program Files (x86)\\Dynamsoft\\{Version number}\\Templates\\RuntimeSettings.json", ECM_Overwrite, errorMessageInit, 256);
 			reader->AppendTplStringToRuntimeSettings("{\"Version\":\"2.0\", \"ImageParameter\":{\"Name\":\"IP1\", \"BarcodeFormatIds\":[\"QR_CODE\"], \"ExpectedBarcodesCount\":10, \"AntiDamageLevel\":3}}", ECM_Ignore, errorMessageAppend, 256);
 			char szContent[256];
 			reader->OutputSettingsToString(szContent, 256, "currentRuntimeSettings");
@@ -2830,6 +2834,11 @@ public:
 	 * @sa UpdateRuntimeSettings
 	 */
 	int SetTemplateSettings(const char* pszTemplateName, PublicParameterSettings *pSettings, char szErrorMsgBuffer[] = NULL, int nErrorMsgBufferLen = 0);
+
+	int SetMaxFrameCount(int nMaxFrameCount);
+
+	int SetRemainingFrameCount(int nRemainingFrameCount);
+
 
 	/**
 	 * @}
