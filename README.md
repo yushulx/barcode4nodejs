@@ -37,6 +37,13 @@ node-gyp configure
 node-gyp build
 ```
 
+**For Visual Studio 2019 Community**
+
+```
+node-gyp configure --msbuild_path="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" --msvs_version=2017
+node-gyp build
+```
+
 ### Linux, macOS and Raspberry Pi
 Change directory to **src**.
 ```
