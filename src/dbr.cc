@@ -25,7 +25,7 @@ struct BarcodeWorker
 	Persistent<Function> callback;	// javascript callback		
 	int iFormat;				// barcode types
 	char filename[128];				// file name
-	STextResultArray *pResults;	// result pointer
+	TextResultArray *pResults;	// result pointer
 	unsigned char *buffer;		    
 	int size;						// file size
 	int errorCode;					// detection error code
@@ -85,15 +85,15 @@ static void DetectionWorking(uv_work_t *req)
 
 	// Update DBR params
 	if (!worker->useTemplate) {
-		PublicParameterSettings pSettings = {};
-		DBR_GetTemplateSettings(hBarcode, "", &pSettings);
-		pSettings.mBarcodeFormatIds = worker->iFormat;
+		PublicRuntimeSettings pSettings = {0};
+		DBR_GetRuntimeSettings(hBarcode, &pSettings);
+		pSettings.barcodeFormatIds = worker->iFormat;
 		char szErrorMsgBuffer[256];
-		DBR_SetTemplateSettings(hBarcode, "", &pSettings, szErrorMsgBuffer, 256);
+		DBR_UpdateRuntimeSettings(hBarcode, &pSettings, szErrorMsgBuffer, 256);
 	}
 
 	// initialize Dynamsoft Barcode Reader
-	STextResultArray *pResults = NULL;
+	TextResultArray *pResults = NULL;
 
 	// decode barcode image
 	int ret = 0;
@@ -121,7 +121,7 @@ static void DetectionWorking(uv_work_t *req)
 						index += 2;
 					}
 					// read barcode
-					ret = DBR_DecodeBuffer(hBarcode, data, width, height, width, IPF_GrayScaled, "");
+					ret = DBR_DecodeBuffer(hBarcode, data, width, height, width, IPF_GRAYSCALED, "");
 					// release memory
 					delete []data, data=NULL;
 				}
@@ -165,7 +165,7 @@ static void DetectionDone(uv_work_t *req,int status)
     BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
 
 	// get barcode results
-	STextResultArray *pResults = worker->pResults;
+	TextResultArray *pResults = worker->pResults;
 	int errorCode = worker->errorCode;
 
 	// array for storing barcode results
@@ -173,13 +173,13 @@ static void DetectionDone(uv_work_t *req,int status)
 
 	if (pResults) 
 	{
-		int count = pResults->nResultsCount;
+		int count = pResults->resultsCount;
 
 		for (int i = 0; i < count; i++)
 		{
 			Local<Object> result = Object::New(isolate);
-			result->Set(String::NewFromUtf8(isolate, "format"), String::NewFromUtf8(isolate, pResults->ppResults[i]->pszBarcodeFormatString));
-			result->Set(String::NewFromUtf8(isolate, "value"), String::NewFromUtf8(isolate, pResults->ppResults[i]->pszBarcodeText));
+			result->Set(String::NewFromUtf8(isolate, "format"), String::NewFromUtf8(isolate, pResults->results[i]->barcodeFormatString));
+			result->Set(String::NewFromUtf8(isolate, "value"), String::NewFromUtf8(isolate, pResults->results[i]->barcodeText));
 			barcodeResults->Set(Number::New(isolate, i), result);
 		}
 
@@ -258,7 +258,7 @@ void DecodeFileAsync(const FunctionCallbackInfo<Value>& args)
 	if (hasTemplate(pTemplateName)) {
 		// Load the template.
 		char szErrorMsg[256];
-		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, ECM_Overwrite, szErrorMsg, 256);
+		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, CM_OVERWRITE, szErrorMsg, 256);
 		worker->useTemplate = true;
 	}
 	else {
@@ -299,7 +299,7 @@ void DecodeFileStreamAsync(const FunctionCallbackInfo<Value>& args)
 	if (hasTemplate(pTemplateName)) {
 		// Load the template.
 		char szErrorMsg[256];
-		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, ECM_Overwrite, szErrorMsg, 256);
+		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, CM_OVERWRITE, szErrorMsg, 256);
 		worker->useTemplate = true;
 	}
 	else {
@@ -341,7 +341,7 @@ void DecodeYUYVAsync(const FunctionCallbackInfo<Value>& args) {
 	if (hasTemplate(pTemplateName)) {
 		// Load the template.
 		char szErrorMsg[256];
-		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, ECM_Overwrite, szErrorMsg, 256);
+		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, CM_OVERWRITE, szErrorMsg, 256);
 		worker->useTemplate = true;
 	}
 	else {
@@ -379,7 +379,7 @@ void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
 	if (hasTemplate(pTemplateName)) {
 		// Load the template.
 		char szErrorMsg[256];
-		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, ECM_Overwrite, szErrorMsg, 256);
+		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, CM_OVERWRITE, szErrorMsg, 256);
 		worker->useTemplate = true;
 	}
 	else {
