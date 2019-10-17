@@ -1,16 +1,13 @@
-var license = '';
+var license = 'LICENSE-KEY';
 
 if (process.platform === 'win32') {
     console.log('Windows');
-    license = 't0068NQAAACqUjZa21C+W7fRdPkf2FRFRr+QpfVC2tDsl/8t25TzYCNxl5s0OkuwFgEMGNfN95Z0HYQ55ROi1px9JqVAP7/c=';
 }
 else if(process.platform === 'linux') {
     console.log('Linux');
-    license = 't0068NQAAAIY/7KegDlZn7YiPdAj0cbA11n2CwuCEWnk2KYla55ozdfmoasjRIpHhl0EUZmko/zxfxFLH3FpLw694uihoCVM=';
 }
 else if(process.platform === 'darwin') {
     console.log('macOS');
-    license = 't0068NQAAAIY/7KegDlZn7YiPdAj0cbA11n2CwuCEWnk2KYla55ozdfmoasjRIpHhl0EUZmko/zxfxFLH3FpLw694uihoCVM=';
 }
 else {
     console.log('Unknown Operating System');
@@ -38,5 +35,6 @@ module.exports = {
     decodeYUYVAsync: dbr.decodeYUYVAsync,
     formats: formats,
     initLicense: dbr.initLicense,
-    barcodeTypes: barcodeTypes
+    barcodeTypes: barcodeTypes,
+    setParameters: dbr.setParameters
 };

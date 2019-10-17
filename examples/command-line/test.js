@@ -109,7 +109,8 @@ if (args.includes('-f')) {
   if (args.includes('-t')) {
     let tIndex = args.indexOf('-t');
     if (args[tIndex + 1]) {
-      template = fs.readFileSync(args[tIndex + 1])
+      templatefile = fs.readFileSync(args[tIndex + 1])
+      dbr.setParameters(templatefile);
     }
     else {
       console.log('Please add a template file.');

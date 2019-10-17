@@ -8,6 +8,7 @@ using namespace v8;
 
 #define DBR_NO_MEMORY 0
 #define DBR_SUCCESS   1
+#define DEFAULT_MEMORY_SIZE 4096
 
 // barcode reader handler
 void* hBarcode = NULL; 
@@ -389,6 +390,28 @@ void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
 }
 
+/*
+ *	setParameters(json)
+ */
+void SetParameters(const FunctionCallbackInfo<Value>& args) {
+	if (!createDBR()) {return;}
+
+	Isolate* isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+
+	// Get arguments
+	String::Utf8Value params(args[0]->ToString()); // json string
+	char *json = *params;
+
+    // Update template setting
+	char errorMessage[DEFAULT_MEMORY_SIZE];
+    int ret = DBR_InitRuntimeSettingsWithString(hBarcode, json, CM_OVERWRITE, errorMessage, 256);
+    if (ret) 
+    {
+        printf("Returned value: %d, error message: %s\n", ret, errorMessage);
+    }
+}
+
 void Init(Handle<Object> exports) {
 	NODE_SET_METHOD(exports, "create", Create);
 	NODE_SET_METHOD(exports, "destroy", Destroy);
@@ -397,6 +420,7 @@ void Init(Handle<Object> exports) {
 	NODE_SET_METHOD(exports, "initLicense", InitLicense);
 	NODE_SET_METHOD(exports, "decodeFileAsync", DecodeFileAsync);
 	NODE_SET_METHOD(exports, "decodeBase64Async", DecodeBase64Async);
+	NODE_SET_METHOD(exports, "setParameters", SetParameters);
 }
 
 NODE_MODULE(dbr, Init)
