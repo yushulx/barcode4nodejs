@@ -14,7 +14,7 @@ Get the [trial license](https://www.dynamsoft.com/CustomerPortal/Portal/Triallic
 **Node v8.11.3**
 
 ## Installation
-* [Dynamsoft Barcode Reader SDK](https://www.dynamsoft.com/Downloads/Dynamic-Barcode-Reader-Download.aspx).
+* [Dynamsoft Barcode Reader SDK v7.2](https://github.com/dynamsoft-dbr/nodejs/releases/tag/v7.2).
 * node-gyp
 
     ```
