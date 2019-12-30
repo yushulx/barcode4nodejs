@@ -161,6 +161,7 @@ static void DetectionDone(uv_work_t *req,int status)
 {
 	Isolate* isolate = Isolate::GetCurrent();
 	HandleScope scope(isolate);
+	Local<Context> context = isolate->GetCurrentContext();
 
     // get the reference to BarcodeWorker
     BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
@@ -179,9 +180,9 @@ static void DetectionDone(uv_work_t *req,int status)
 		for (int i = 0; i < count; i++)
 		{
 			Local<Object> result = Object::New(isolate);
-			result->Set(String::NewFromUtf8(isolate, "format"), String::NewFromUtf8(isolate, pResults->results[i]->barcodeFormatString));
-			result->Set(String::NewFromUtf8(isolate, "value"), String::NewFromUtf8(isolate, pResults->results[i]->barcodeText));
-			barcodeResults->Set(Number::New(isolate, i), result);
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "format", NewStringType::kNormal).ToLocalChecked(), String::NewFromUtf8(isolate, pResults->results[i]->barcodeFormatString, NewStringType::kNormal).ToLocalChecked());
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "value", NewStringType::kNormal).ToLocalChecked(), String::NewFromUtf8(isolate, pResults->results[i]->barcodeText, NewStringType::kNormal).ToLocalChecked());
+			barcodeResults->Set(context, Number::New(isolate, i), result);
 		}
 
 		// release memory of barcode results
@@ -194,7 +195,7 @@ static void DetectionDone(uv_work_t *req,int status)
 	Local<Number> err = Number::New(isolate, errorCode);
 	Local<Value> argv[argc] = {err, barcodeResults};
 	Local<Function> cb = Local<Function>::New(isolate, worker->callback);
-    cb->Call(isolate->GetCurrentContext()->Global(), argc, argv);
+    cb->Call(context, Null(isolate), argc, argv);
 
 	// release memory of BarcodeWorker
     delete worker;
@@ -205,9 +206,12 @@ static void DetectionDone(uv_work_t *req,int status)
  */
 void InitLicense(const FunctionCallbackInfo<Value>& args) 
 {
+	Isolate* isolate = args.GetIsolate();
+	Local<Context> context = isolate->GetCurrentContext();
+
 	if (!createDBR()) {return;}
 
-	String::Utf8Value license(args[0]->ToString());
+	String::Utf8Value license(isolate, args[0]);
 	char *pszLicense = *license;
 	DBR_InitLicense(hBarcode, pszLicense);
 }
@@ -235,15 +239,15 @@ void DecodeFileAsync(const FunctionCallbackInfo<Value>& args)
 {
 	if (!createDBR()) {return;}
 
-	Isolate* isolate = Isolate::GetCurrent();
-	HandleScope scope(isolate);
+	Isolate* isolate = args.GetIsolate();
+	Local<Context> context = isolate->GetCurrentContext();
 
 	// get arguments
-	String::Utf8Value fileName(args[0]->ToString()); // file name
+	String::Utf8Value fileName(isolate, args[0]); // file name
 	char *pFileName = *fileName;
-	int iFormat = args[1]->IntegerValue(); // barcode types
+	int iFormat = args[1]->Int32Value(context).ToChecked(); // barcode types
 	Local<Function> cb = Local<Function>::Cast(args[2]); // javascript callback function
-	String::Utf8Value templateName(args[3]->ToString()); // template name
+	String::Utf8Value templateName(isolate, args[3]); // template name
 	char *pTemplateName = *templateName;
 
 	// initialize BarcodeWorker
@@ -276,15 +280,15 @@ void DecodeFileStreamAsync(const FunctionCallbackInfo<Value>& args)
 {
 	if (!createDBR()) {return;}
 
-	Isolate* isolate = Isolate::GetCurrent();
-	HandleScope scope(isolate);
+	Isolate* isolate = args.GetIsolate();
+	Local<Context> context = isolate->GetCurrentContext();
 
 	// get arguments
-	unsigned char* buffer = (unsigned char*) node::Buffer::Data(args[0]->ToObject()); // file stream
-	int fileSize = args[1]->IntegerValue();	// file size
-	int iFormat = args[2]->IntegerValue(); // barcode types
+	unsigned char* buffer = (unsigned char*) node::Buffer::Data(args[0]); // file stream
+	int fileSize = args[1]->Int32Value(context).ToChecked();	// file size
+	int iFormat = args[2]->Int32Value(context).ToChecked(); // barcode types
 	Local<Function> cb = Local<Function>::Cast(args[3]); // javascript callback function
-	String::Utf8Value templateName(args[4]->ToString()); // template name
+	String::Utf8Value templateName(isolate, args[4]); // template name
 	char *pTemplateName = *templateName;
 
 	// initialize BarcodeWorker
@@ -317,15 +321,15 @@ void DecodeYUYVAsync(const FunctionCallbackInfo<Value>& args) {
 	if (!createDBR()) {return;}
 
 	Isolate* isolate = Isolate::GetCurrent();
-	HandleScope scope(isolate);
+	Local<Context> context = isolate->GetCurrentContext();
 
 	// get arguments
-	unsigned char* buffer = (unsigned char*) node::Buffer::Data(args[0]->ToObject()); // file stream
-	int width = args[1]->IntegerValue();	// image width
-	int height = args[2]->IntegerValue();	// image height
-	int iFormat = args[3]->IntegerValue(); // barcode types
+	unsigned char* buffer = (unsigned char*) node::Buffer::Data(args[0]); // file stream
+	int width = args[1]->Int32Value(context).ToChecked();	// image width
+	int height = args[2]->Int32Value(context).ToChecked();	// image height
+	int iFormat = args[3]->Int32Value(context).ToChecked(); // barcode types
 	Local<Function> cb = Local<Function>::Cast(args[4]); // javascript callback function
-	String::Utf8Value templateName(args[5]->ToString()); // template name
+	String::Utf8Value templateName(isolate, args[5]); // template name
 	char *pTemplateName = *templateName;
 
 	// initialize BarcodeWorker
@@ -359,13 +363,13 @@ void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
 	if (!createDBR()) {return;}
 
 	Isolate* isolate = Isolate::GetCurrent();
-	HandleScope scope(isolate);
+	Local<Context> context = isolate->GetCurrentContext();
 
 	// get arguments
-	char* pszBase64 = (char*) node::Buffer::Data(args[0]->ToObject()); // base64 string
-	int iFormat = args[1]->IntegerValue(); // barcode types
+	char* pszBase64 = (char*) node::Buffer::Data(args[0]); // base64 string
+	int iFormat = args[1]->Int32Value(context).ToChecked(); // barcode types
 	Local<Function> cb = Local<Function>::Cast(args[2]); // javascript callback function
-	String::Utf8Value templateName(args[3]->ToString()); // template name
+	String::Utf8Value templateName(isolate, args[3]); // template name
 	char *pTemplateName = *templateName;
 
 	// initialize BarcodeWorker
@@ -397,10 +401,10 @@ void SetParameters(const FunctionCallbackInfo<Value>& args) {
 	if (!createDBR()) {return;}
 
 	Isolate* isolate = Isolate::GetCurrent();
-	HandleScope scope(isolate);
+	Local<Context> context = isolate->GetCurrentContext();
 
 	// Get arguments
-	String::Utf8Value params(args[0]->ToString()); // json string
+	String::Utf8Value params(isolate, args[0]); // json string
 	char *json = *params;
 
     // Update template setting
@@ -412,7 +416,7 @@ void SetParameters(const FunctionCallbackInfo<Value>& args) {
     }
 }
 
-void Init(Handle<Object> exports) {
+void Init(Local<Object> exports) {
 	NODE_SET_METHOD(exports, "create", Create);
 	NODE_SET_METHOD(exports, "destroy", Destroy);
 	NODE_SET_METHOD(exports, "decodeYUYVAsync", DecodeYUYVAsync);
