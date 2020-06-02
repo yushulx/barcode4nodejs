@@ -50,7 +50,7 @@ Change directory to **src**.
 cd src
 ```
 
-Edit `binding.gyp`. Replace `/mnt/g/nodejs/libDynamsoftBarcodeReader.so` or `/mnt/g/nodejs/libDynamsoftBarcodeReader.dylib` with yours.
+Edit `binding.gyp`. Replace `/mnt/g/nodejs/libDynamsoftBarcodeReader.so` and `/mnt/g/nodejs` or `/mnt/g/nodejs/libDynamsoftBarcodeReader.dylib` and `/mnt/g/nodejs` with yours.
 
 Build the Node.js extension:
 
