@@ -1,6 +1,6 @@
 {
   "name": "dbr-demo",
-  "version": "7.2",
+  "version": "7.2.0",
   "description": "The demo illustrates how to create an online barcode reader with Dynamsoft Barcode Reader SDK and Node.js",
   "main": "server.js",
   "dependencies": {
