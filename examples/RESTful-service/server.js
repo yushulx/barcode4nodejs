@@ -7,7 +7,7 @@ var server = restify.createServer({
   name: 'MyApp',
 });
 
-var dbr = require('../../src/config');
+var dbr = require('../../index.js');
 var barcodeTypes = dbr.barcodeTypes;
 
 server.use(restify.bodyParser());

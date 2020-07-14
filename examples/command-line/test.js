@@ -1,4 +1,4 @@
-var dbr = require('../../src/config');
+var dbr = require('../../index.js');
 var barcodeTypes = dbr.barcodeTypes;
 var readline = require('readline');
 var fs = require('fs');

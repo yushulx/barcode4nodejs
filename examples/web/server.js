@@ -6,7 +6,7 @@ var app = express();
 var path = require('path');
 var http = require('http');
 
-var dbr = require('../../src/config');
+var dbr = require('../../index.js');
 var barcodeTypes = dbr.barcodeTypes;
 
 function decodeBarcode(res, fileName, barcodeType) {

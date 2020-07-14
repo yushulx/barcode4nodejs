@@ -29,7 +29,7 @@
         }
 
         function doReadBarcode() {
-            var dbr = require('../../src/config');
+            var dbr = require('../../index.js');
             var fileName = document.getElementById('fileToUpload').files[0].path;
             dbr.decodeFileAsync(fileName, getSelectedBarcodeTypes(), function (err, msg) {
                 var response = 'Totol count: ' + msg.length;

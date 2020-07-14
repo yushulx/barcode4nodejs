@@ -1,4 +1,4 @@
-var dbr = require('../../src/config');
+var dbr = require('../../index.js');
 var barcodeTypes = dbr.barcodeTypes;
 
 var v4l2camera = require("v4l2camera");
