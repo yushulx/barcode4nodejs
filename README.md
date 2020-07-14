@@ -22,13 +22,9 @@ Get the [trial license](https://www.dynamsoft.com/CustomerPortal/Portal/Triallic
     ```
 
 ## How to Build
-### Windows
-Change directory to **src**.
-```
-cd src
-```
 
-Edit `binding.gyp`. Replace `c:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 7.4\\Components\\C_C++\\Lib\\DBRx64.lib` and `c:\\Program Files (x86)\\Dynamsoft\\Barcode Reader 7.4\\Components\\C_C++\\Redist\\x64\\` with yours.
+### Windows, Linux, macOS and Raspberry Pi
+Replace the library files in `platforms/` with yours.
 
 Build the Node.js extension:
 
@@ -41,21 +37,6 @@ node-gyp build
 
 ```
 node-gyp configure --msbuild_path="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" --msvs_version=2017
-node-gyp build
-```
-
-### Linux, macOS and Raspberry Pi
-Change directory to **src**.
-```
-cd src
-```
-
-Edit `binding.gyp`. Replace `/mnt/g/nodejs/libDynamsoftBarcodeReader.so` or `/mnt/g/nodejs/libDynamsoftBarcodeReader.dylib` with yours.
-
-Build the Node.js extension:
-
-```
-node-gyp configure
 node-gyp build
 ```
 
