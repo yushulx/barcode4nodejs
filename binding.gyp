@@ -3,6 +3,9 @@
         {
             'target_name': "dbr",
             'sources': ["src/dbr.cc"],
+            "cflags" : [
+                "-std=c++11"
+            ],
             'ldflags': [
                         "-Wl,-rpath,'$$ORIGIN'"
             ],
@@ -16,8 +19,16 @@
                     ],
                     
                     'libraries': [
-                        "-lDynamsoftBarcodeReader", "-L./platforms/linux"
+                        "-lDynamsoftBarcodeReader", "-L../platforms/linux"
                     ],
+                    'copies': [
+                        {
+                            'destination': 'build/Release/',
+                            'files': [
+                                './platforms/linux/libDynamsoftBarcodeReader.so'
+                            ]
+                        }
+                    ]
                 }],
                 ['OS=="win"', {
                     'defines': [
@@ -40,7 +51,15 @@
                         'MAC_DBR',
                     ],
                     'libraries': [
-                        "-lDynamsoftBarcodeReader", "-L./platforms/macos"
+                        "-lDynamsoftBarcodeReader", "-L../platforms/macos"
+                    ],
+                    'copies': [
+                        {
+                            'destination': 'build/Release/',
+                            'files': [
+                                './platforms/macos/libDynamsoftBarcodeReader.dylib'
+                            ]
+                        }
                     ]
                 }]
             ]

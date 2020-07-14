@@ -88,7 +88,7 @@ static void DetectionWorking(uv_work_t *req)
 
 	// Update DBR params
 	if (!worker->useTemplate) {
-		PublicRuntimeSettings pSettings = {0};
+		PublicRuntimeSettings pSettings = {};
 		DBR_GetRuntimeSettings(hBarcode, &pSettings);
 		pSettings.barcodeFormatIds = worker->iFormat;
 		char szErrorMsgBuffer[256];
