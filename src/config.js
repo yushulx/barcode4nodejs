@@ -15,10 +15,10 @@ else {
 
 var dbr = require('./build/Release/dbr');
 var formats = {
-    'OneD': 0x3FF,
-    'PDF417': 0x2000000,
-    'QRCode': 0x4000000,
-    'DataMatrix': 0x8000000,
+    'OneD': 0x000007FF,
+    'PDF417': 0x02000000,
+    'QRCode': 0x04000000,
+    'DataMatrix': 0x08000000,
     'Aztec': 0x10000000
 }
 
@@ -36,5 +36,6 @@ module.exports = {
     formats: formats,
     initLicense: dbr.initLicense,
     barcodeTypes: barcodeTypes,
-    setParameters: dbr.setParameters
+    setParameters: dbr.setParameters,
+    decodeBufferAsync: dbr.decodeBufferAsync
 };

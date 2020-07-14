@@ -17,7 +17,8 @@ typedef enum {
 	NO_BUFFER,
 	FILE_STREAM,
 	YUYV_BUFFER,
-	BASE64	
+	BASE64,
+	RGB_BUFFER,
 } BufferType;
 
 struct BarcodeWorker
@@ -35,6 +36,7 @@ struct BarcodeWorker
 	BufferType bufferType;			// buffer type
 	char * pszBase64;			// image as base64 string
 	bool useTemplate;
+	int stride;					// image stride
 };
 
 /**
@@ -136,6 +138,30 @@ static void DetectionWorking(uv_work_t *req)
 				}
 			}
 			break;
+		case RGB_BUFFER:
+			{
+				if (worker->buffer)
+				{
+					int width = worker->width, height = worker->height, stride = worker->stride;
+					ImagePixelFormat format = IPF_RGB_888;
+
+					if (width == stride)
+					{
+						format = IPF_GRAYSCALED;
+					}
+					else if (width * 3 == stride)
+					{
+						format = IPF_RGB_888;
+					}
+					else if (width * 4 == stride)
+					{
+						format = IPF_ARGB_8888;
+					}
+					
+					ret = DBR_DecodeBuffer(hBarcode, worker->buffer, width, height, stride, format, "");
+				}
+			}
+			break;
 		default:
 			{
 				ret = DBR_DecodeFile(hBarcode, worker->filename, "");
@@ -182,6 +208,14 @@ static void DetectionDone(uv_work_t *req,int status)
 			Local<Object> result = Object::New(isolate);
 			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "format", NewStringType::kNormal).ToLocalChecked(), String::NewFromUtf8(isolate, pResults->results[i]->barcodeFormatString, NewStringType::kNormal).ToLocalChecked());
 			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "value", NewStringType::kNormal).ToLocalChecked(), String::NewFromUtf8(isolate, pResults->results[i]->barcodeText, NewStringType::kNormal).ToLocalChecked());
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "x1", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->x1));
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "y1", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->y1));
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "x2", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->x2));
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "y2", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->y2));
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "x3", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->x3));
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "y3", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->y3));
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "x4", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->x4));
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "y4", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->y4));
 			barcodeResults->Set(context, Number::New(isolate, i), result);
 		}
 
@@ -315,7 +349,50 @@ void DecodeFileStreamAsync(const FunctionCallbackInfo<Value>& args)
 }
 
 /*
- *	decodeYUYVAsync(buffer, width, height, barcodeTypes, callback)
+ *	decodeBuffer(buffer, width, height, stride, barcodeTypes, callback, template)
+ */
+void DecodeBufferAsync(const FunctionCallbackInfo<Value>& args) {
+	if (!createDBR()) {return;}
+	Isolate* isolate = Isolate::GetCurrent();
+	Local<Context> context = isolate->GetCurrentContext();
+
+	// get arguments
+	unsigned char* buffer = (unsigned char*) node::Buffer::Data(args[0]); // file stream
+	int width = args[1]->Int32Value(context).ToChecked();	// image width
+	int height = args[2]->Int32Value(context).ToChecked();	// image height
+	int stride = args[3]->Int32Value(context).ToChecked(); // stride
+	int iFormat = args[4]->Int32Value(context).ToChecked(); // barcode types
+	Local<Function> cb = Local<Function>::Cast(args[5]); // javascript callback function
+	String::Utf8Value templateName(isolate, args[6]); // template name
+	char *pTemplateName = *templateName;
+
+	// initialize BarcodeWorker
+	BarcodeWorker *worker = new BarcodeWorker;
+	worker->request.data = worker;
+	worker->callback.Reset(isolate, cb);
+	worker->iFormat = iFormat;
+	worker->pResults = NULL;
+	worker->buffer = buffer;
+	worker->width = width;
+	worker->height = height;
+	worker->bufferType = RGB_BUFFER;
+	worker->stride = stride;
+	
+	if (hasTemplate(pTemplateName)) {
+		// Load the template.
+		char szErrorMsg[256];
+		DBR_InitRuntimeSettingsWithString(hBarcode, pTemplateName, CM_OVERWRITE, szErrorMsg, 256);
+		worker->useTemplate = true;
+	}
+	else {
+		worker->useTemplate = false;
+	}
+
+	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
+}
+
+/*
+ *	decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)
  */
 void DecodeYUYVAsync(const FunctionCallbackInfo<Value>& args) {
 	if (!createDBR()) {return;}
@@ -425,6 +502,7 @@ void Init(Local<Object> exports) {
 	NODE_SET_METHOD(exports, "decodeFileAsync", DecodeFileAsync);
 	NODE_SET_METHOD(exports, "decodeBase64Async", DecodeBase64Async);
 	NODE_SET_METHOD(exports, "setParameters", SetParameters);
+	NODE_SET_METHOD(exports, "decodeBufferAsync", DecodeBufferAsync);
 }
 
 NODE_MODULE(dbr, Init)

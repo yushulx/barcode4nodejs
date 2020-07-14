@@ -3,3 +3,4 @@
 /src/build
 /examples/desktop-electron/node_modules
 /examples/RESTful-service/node_modules
+node_modules
