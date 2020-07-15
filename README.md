@@ -109,16 +109,17 @@ barcodeTypes = dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.
 **template**
 ```js
 let params = {
-    "Version": "2.0",
-    "ImageParameter": {
-        "Name": "Custom_143301_827",
-        "BarcodeFormatIds": [
-        "PDF417"
-        ],
-        "ExpectedBarcodesCount": 9,
-        "ScaleDownThreshold": 1200000,
-        "BinarizationBlockSize": 5
-    }
+  "ImageParameter": {
+    "Name": "Custom_143301_827",
+    "BarcodeFormatIds": [
+      "BF_ALL"
+    ],
+    "DeblurLevel": 9,
+    "ExpectedBarcodesCount": 100,
+    "ScaleDownThreshold": 1200000,
+    "Timeout": 100000
+  },
+  "Version": "3.0"
 };
 template = JSON.stringify(params);
 ```
