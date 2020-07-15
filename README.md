@@ -33,6 +33,9 @@ node-gyp configure
 node-gyp build
 ```
 
+**For Raspberry Pi**
+Download and extract the Raspberry Pi package, and then copy the `libDynamsoftBarcodeReader.so` file to the `platforms/linux` folder.
+
 **For Visual Studio 2019 Community**
 
 ```
