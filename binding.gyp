@@ -55,7 +55,7 @@
                     ],
                     'copies': [
                         {
-                            'destination': 'build/Release/',
+                            'destination': '/usr/local/lib/',
                             'files': [
                                 './platforms/macos/libDynamsoftBarcodeReader.dylib'
                             ]
