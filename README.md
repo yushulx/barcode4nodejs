@@ -96,7 +96,7 @@ node-gyp build
 - decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback, template)
 - decodeBase64Async(base64, barcodeTypes, callback, template)
 - decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)
-- decodeBuffer(buffer, width, height, stride, barcodeTypes, callback, template)
+- decodeBufferAsync(buffer, width, height, stride, barcodeTypes, callback, template, maxBufferLength)
 
 Template is an advanced usage. By default, you just need to set template "".
 
