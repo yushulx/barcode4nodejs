@@ -267,7 +267,7 @@ void Destroy(const FunctionCallbackInfo<Value>& args)
 }
 
 /*
- *	decodeFileAsync(fileName, barcodeTypes, callback)
+ *	decodeFileAsync(fileName, barcodeTypes, callback, template)
  */
 void DecodeFileAsync(const FunctionCallbackInfo<Value>& args) 
 {
@@ -308,7 +308,7 @@ void DecodeFileAsync(const FunctionCallbackInfo<Value>& args)
 }
 
 /*
- *	decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback)
+ *	decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback, template)
  */
 void DecodeFileStreamAsync(const FunctionCallbackInfo<Value>& args) 
 {
@@ -434,7 +434,7 @@ void DecodeYUYVAsync(const FunctionCallbackInfo<Value>& args) {
 }
 
 /*
- *	decodeBase64Async(base64, barcodeTypes, callback)
+ *	decodeBase64Async(base64, barcodeTypes, callback, template)
  */
 void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
 	if (!createDBR()) {return;}

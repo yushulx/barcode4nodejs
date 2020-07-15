@@ -19,9 +19,17 @@ Get the [trial license](https://www.dynamsoft.com/CustomerPortal/Portal/Triallic
     npm i node-gyp -g
     ```
 
-## How to Build
+## Quick Usage
 
-### Windows, Linux, macOS and Raspberry Pi
+```js
+const dbr = require('barcode4nodejs');
+dbr.initLicense("LICENSE-KEY")
+dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.formats.DataMatrix | dbr.formats.Aztec, function(err, msg){
+  console.log(msg)
+}, "");
+```
+
+## How to Build the Module for Windows, Linux, macOS and Raspberry Pi
 Replace the library files in `platforms/` with yours.
 
 Build the Node.js extension:
@@ -31,10 +39,10 @@ node-gyp configure
 node-gyp build
 ```
 
-**For Raspberry Pi**
+### For Raspberry Pi
 Download and extract the Raspberry Pi package, and then copy the `libDynamsoftBarcodeReader.so` file to the `platforms/linux` folder.
 
-**For Visual Studio 2019 Community**
+### For Visual Studio 2019 Community
 
 ```
 node-gyp configure --msbuild_path="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" --msvs_version=2017
@@ -82,40 +90,37 @@ node-gyp build
     
     Open `https://< ip >:2018` to scan barcodes in web browsers.
 
-## Template Settings
-https://www.dynamsoft.com/help/Barcode-Reader/devguide/Template/TemplateSettingsList.html
+## APIs
+- initLicense(license-key)
+- decodeFileAsync(fileName, barcodeTypes, callback, template)
+- decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback, template)
+- decodeBase64Async(base64, barcodeTypes, callback, template)
+- decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)
+- decodeBuffer(buffer, width, height, stride, barcodeTypes, callback, template)
 
-## How to Set Barcode Types
+Template is an advanced usage. By default, you just need to set template "".
 
-The simplest way to set barcode types:
+**barcodeTypes**
 
-```javascript
-var barcodeTypes = dbr.formats.OneD;
-decodeFileAsync(fileName, barcodeTypes, callback);
+```js
+barcodeTypes = dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.formats.DataMatrix | dbr.formats.Aztec
 ```
 
-Alternatively, you can use template:
-
-```javascript
-// From file
-template = fs.readFileSync("<template file>");
-
-// From JSON object
+**template**
+```js
 let params = {
     "Version": "2.0",
     "ImageParameter": {
-      "Name": "Custom_143301_827",
-      "BarcodeFormatIds": [
+        "Name": "Custom_143301_827",
+        "BarcodeFormatIds": [
         "PDF417"
-      ],
-      "ExpectedBarcodesCount": 9,
-      "ScaleDownThreshold": 1200000,
-      "BinarizationBlockSize": 5
+        ],
+        "ExpectedBarcodesCount": 9,
+        "ScaleDownThreshold": 1200000,
+        "BinarizationBlockSize": 5
     }
-  };
+};
 template = JSON.stringify(params);
-
-decodeFileAsync(fileName, 0, callback, template);
 ```
 
 
