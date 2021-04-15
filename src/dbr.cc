@@ -135,6 +135,7 @@ static void DetectionWorking(uv_work_t *req)
 				if (worker->pszBase64) 
 				{
 					ret = DBR_DecodeBase64String(hBarcode, worker->pszBase64, "");
+					free(worker->pszBase64);
 				}
 			}
 			break;
@@ -443,7 +444,9 @@ void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
 	Local<Context> context = isolate->GetCurrentContext();
 
 	// get arguments
-	char* pszBase64 = (char*) node::Buffer::Data(args[0]); // base64 string
+	String::Utf8Value base64(isolate, args[0]); // file name
+	char* pszBase64 = *base64;
+	int length = base64.length();
 	int iFormat = args[1]->Int32Value(context).ToChecked(); // barcode types
 	Local<Function> cb = Local<Function>::Cast(args[2]); // javascript callback function
 	String::Utf8Value templateName(isolate, args[3]); // template name
@@ -455,7 +458,8 @@ void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
 	worker->callback.Reset(isolate, cb);
 	worker->iFormat = iFormat;
 	worker->pResults = NULL;
-	worker->pszBase64 = pszBase64;
+	worker->pszBase64 = (char*)calloc(length, sizeof(char));
+	strcpy(worker->pszBase64, pszBase64);
 	worker->bufferType = BASE64;
 
 	if (hasTemplate(pTemplateName)) {
