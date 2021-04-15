@@ -61,7 +61,7 @@ server.post('/dbr', function create(req, res, next) {
   // let image = str(req.body);
   // console.log(image);
   let data = Buffer.from(req.body);
-  dbr.decodeBase64Async(data, barcodeTypes, function (err, msg) {
+  dbr.decodeBase64Async(data.toString('utf8'), barcodeTypes, function (err, msg) {
     // fs.unlink(file, function (err) {
     //   console.log('Removed cached: ' + file);
     // });
