@@ -1,9 +1,9 @@
 # DBR Node.js Extension
 
-The project aims to help developers build **Node.js barcode** apps with [Dynamsoft Barcode Reader](https://www.dynamsoft.com/Products/Dynamic-Barcode-Reader.aspx) in Windows, Linux, macOS, and Raspberry Pi.
+The project aims to help developers build **Node.js barcode** apps with [Dynamsoft Barcode Reader](https://www.dynamsoft.com/barcode-reader/overview/) in Windows, Linux, macOS, and Raspberry Pi.
 
 ## Barcode SDK License Key
-Get the [trial license](https://www.dynamsoft.com/CustomerPortal/Portal/Triallicense.aspx).
+Get the [trial license](https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr).
 
 ## Contact Us
 <support@dynamsoft.com>
@@ -12,7 +12,7 @@ Get the [trial license](https://www.dynamsoft.com/CustomerPortal/Portal/Triallic
 **Node v12.14.0**
 
 ## Installation
-* [Dynamsoft Barcode Reader SDK v7.4](https://www.dynamsoft.com/Downloads/Dynamic-Barcode-Reader-Download.aspx).
+* [Dynamsoft Barcode Reader SDK v7.4](https://www.dynamsoft.com/barcode-reader/downloads).
 * node-gyp
 
     ```

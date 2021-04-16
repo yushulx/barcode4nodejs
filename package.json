@@ -1,7 +1,7 @@
 {
   "name": "barcode4nodejs",
-  "version": "1.0.1",
-  "description": "Dynamsoft Barcode Reader nodejs bindings with JavaScript.",
+  "version": "1.0.2",
+  "description": "Node.js bindings to Dynamsoft Barcode Reader C/C++ SDK.",
   "keywords": [
     "barcode",
     "linear barcode",
@@ -18,9 +18,9 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dynamsoft/nodejs-barcode"
+    "url": "https://github.com/yushulx/nodejs-barcode"
   },
-  "homepage": "https://github.com/dynamsoft/nodejs-barcode#readme",
+  "homepage": "https://github.com/yushulx/nodejs-barcode#readme",
   "main": "index.js",
   "typings": "",
   "scripts": {
