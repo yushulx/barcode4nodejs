@@ -84,6 +84,21 @@ function decodeYUYVAsync(fileName, width, height) {
   });
 }
 
+function decodeBase64Async(fileName) {
+  fs.readFile(fileName, 'utf8' , (err, data) => {
+    dbr.decodeBase64Async(data, barcodeTypes, function (err, msg) {
+      let result = null;
+            for (index in msg) {
+              result = msg[index];
+              console.log('Format: ' + result['format']);
+              console.log('Value : ' + result['value']);
+              console.log('##################');
+            }
+  
+    }, template);
+  });
+}
+
 // https://stackoverflow.com/questions/2727167/how-do-you-get-a-list-of-the-names-of-all-files-present-in-a-directory-in-node-j
 function getFiles(dir, files_) {
   files_ = files_ || [];
