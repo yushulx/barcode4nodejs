@@ -34,9 +34,9 @@ struct BarcodeWorker
 	int width;						// image width
 	int height; 					// image height
 	BufferType bufferType;			// buffer type
-	char * pszBase64;			// image as base64 string
 	bool useTemplate;
 	int stride;					// image stride
+	char *pszBase64;			// image as base64 string
 };
 
 /**
@@ -458,7 +458,7 @@ void DecodeBase64Async(const FunctionCallbackInfo<Value>& args) {
 	worker->callback.Reset(isolate, cb);
 	worker->iFormat = iFormat;
 	worker->pResults = NULL;
-	worker->pszBase64 = (char*)calloc(length, sizeof(char));
+	worker->pszBase64 = (char*)calloc(length + 1, sizeof(char));
 	strcpy(worker->pszBase64, pszBase64);
 	worker->bufferType = BASE64;
 
