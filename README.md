@@ -1,17 +1,17 @@
-# DBR Node.js Extension
+# Node.js Barcode Addon Written in C++
+![version](https://img.shields.io/npm/v/barcode4nodejs.svg)
 
-The project aims to help developers build **Node.js barcode** apps with [Dynamsoft Barcode Reader](https://www.dynamsoft.com/barcode-reader/overview/) in Windows, Linux, macOS, and Raspberry Pi.
+A Node.js barcode addon built with [Dynamsoft Barcode Reader C++ SDK](https://www.dynamsoft.com/barcode-reader/overview/). It helps developers to build Node.js barcode apps for Windows, Linux, macOS, and Raspberry Pi.
 
 ## What You Should Know
 - [![](https://img.shields.io/badge/Download-Offline%20SDK-orange)](https://www.dynamsoft.com/barcode-reader/downloads)
 - [![](https://img.shields.io/badge/Get-30--day%20FREE%20Trial%20License-blue)](https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr)
 
-## Environment
-**Node v12.14.0**
 
-## Installation
-* [Dynamsoft Barcode Reader SDK v7.4](https://www.dynamsoft.com/barcode-reader/downloads).
-* node-gyp
+## Requirements
+- Node v14.16.0
+- Platform-specific C/C++ compiler
+- node-gyp
 
     ```
     npm i node-gyp -g
@@ -27,25 +27,33 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
 }, "");
 ```
 
-## How to Build the Module for Windows, Linux, macOS and Raspberry Pi
-Replace the library files in `platforms/` with yours.
+## How to Customize and Build the Module for Windows, Linux, macOS and Raspberry Pi
 
-Build the Node.js extension:
+1. Get the source code:
 
-```
-node-gyp configure
-node-gyp build
-```
+    ```
+    git clone https://github.com/yushulx/nodejs-barcode.git
+    ```
 
-### For Raspberry Pi
-Download and extract the Raspberry Pi package, and then copy the `libDynamsoftBarcodeReader.so` file to the `platforms/linux` folder.
+2. Edit `src/dbr.cc` and `index.js`. 
 
-### For Visual Studio 2019 Community
+    **Note: The current source code is only compatible with Dynamsoft Barcode Reader v7.4**.
 
-```
-node-gyp configure --msbuild_path="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" --msvs_version=2017
-node-gyp build
-```
+3. Replace the library files in `platforms/` with yours.
+
+4. Build the Node.js extension:
+
+    ```
+    node-gyp configure
+    node-gyp build
+    ```
+
+    **For Visual Studio 2019 Community**
+
+    ```
+    node-gyp configure --msbuild_path="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe" --msvs_version=2017
+    node-gyp build
+    ```
 
 ## Examples    
 - examples/command-line
@@ -122,13 +130,5 @@ let params = {
 template = JSON.stringify(params);
 ```
 
-
-## Related Articles
-* [How to Wrap Dynamsoft Linux Barcode SDK for Node.js](https://www.codepool.biz/linux-barcode-sdk-node-javascript.html)
-* [How to Build Node.js Barcode Reader on Raspberry Pi](https://www.codepool.biz/raspberry-pi-nodejs-barcode-reader.html)
-* [Node.js Barcode Scanner with UVC Camera for Raspberry Pi](https://www.codepool.biz/nodejs-barcode-scanner-camera-raspberrypi.html)
-* [How to Make Node Barcode Reader Addon on Linux](https://www.codepool.biz/linux-node-barcode-reader-addon.html)
-* [Making Online Barcode Reader on Linux with Node.js](https://www.codepool.biz/nodejs-linux-online-barcode-reader.html)
-* [Making Dynamsoft Barcode SDK an Addon for Node.js](https://www.codepool.biz/making-barcode-addon-for-nodejs.html)
-* [How to Make Web Barcode Reader with NodeJS REST Framework](https://www.codepool.biz/web-barcode-reader-nodejs-rest.html)
-
+## Contact Us
+support@dynamsoft.com
