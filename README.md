@@ -2,11 +2,9 @@
 
 The project aims to help developers build **Node.js barcode** apps with [Dynamsoft Barcode Reader](https://www.dynamsoft.com/barcode-reader/overview/) in Windows, Linux, macOS, and Raspberry Pi.
 
-## Barcode SDK License Key
-Get the [trial license](https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr).
-
-## Contact Us
-<support@dynamsoft.com>
+## What You Should Know
+- [![](https://img.shields.io/badge/Download-Offline%20SDK-orange)](https://www.dynamsoft.com/barcode-reader/downloads)
+- [![](https://img.shields.io/badge/Get-30--day%20FREE%20Trial%20License-blue)](https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr)
 
 ## Environment
 **Node v12.14.0**
