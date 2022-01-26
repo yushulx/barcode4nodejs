@@ -37,9 +37,7 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
 
 2. Edit `src/dbr.cc` and `index.js`. 
 
-    **Note: The current source code is only compatible with Dynamsoft Barcode Reader v7.4**.
-
-3. Replace the library files in `platforms/` with yours.
+3. Download Dynamsoft C++ Barcode SDK. Copy header files to `src` folder and copy platform-specific shared libraries to `platforms` folder.
 
 4. Build the Node.js extension:
 
@@ -104,15 +102,15 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
 - decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)
 - decodeBufferAsync(buffer, width, height, stride, barcodeTypes, callback, template, maxBufferLength)
 
-Template is an advanced usage. By default, you just need to set template "".
+To customize a template, you can visit the [barcode reader online demo](https://demo.dynamsoft.com/barcode-reader/) and go to the advanced settings. Setting template as "" is enough for most cases.
 
-**barcodeTypes**
+**Set barcodeTypes**
 
 ```js
 barcodeTypes = dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.formats.DataMatrix | dbr.formats.Aztec
 ```
 
-**template**
+**Use template**
 ```js
 let params = {
   "ImageParameter": {
