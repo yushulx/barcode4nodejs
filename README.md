@@ -1,7 +1,7 @@
-# Node.js Barcode Addon Written in C++
+# Node.js Barcode Reader SDK
 ![version](https://img.shields.io/npm/v/barcode4nodejs.svg)
 
-A Node.js barcode addon built with [Dynamsoft Barcode Reader C++ SDK](https://www.dynamsoft.com/barcode-reader/overview/). It helps developers to build Node.js barcode apps for Windows, Linux, macOS, and Raspberry Pi.
+The Node.js barcode reader SDK is implemented by wrapping [Dynamsoft Barcode Reader C++ SDK](https://www.dynamsoft.com/barcode-reader/overview/). It helps developers to build Node.js barcode apps for Windows, Linux, macOS, and Raspberry Pi.
 
 ## What You Should Know
 - [![](https://img.shields.io/badge/Download-Offline%20SDK-orange)](https://www.dynamsoft.com/barcode-reader/downloads)
@@ -9,7 +9,7 @@ A Node.js barcode addon built with [Dynamsoft Barcode Reader C++ SDK](https://ww
 
 
 ## Requirements
-- Node v14.16.0
+- Dynamsoft Barcode Reader v8.8
 - Platform-specific C/C++ compiler
 - node-gyp
 
@@ -130,5 +130,3 @@ let params = {
 template = JSON.stringify(params);
 ```
 
-## Contact Us
-support@dynamsoft.com

@@ -2,6 +2,7 @@
 #include <node_buffer.h>
 #include <string.h>
 #include <uv.h>
+#include "DynamsoftCommon.h"
 #include "DynamsoftBarcodeReader.h"
 
 using namespace v8;
