@@ -249,7 +249,10 @@ void InitLicense(const FunctionCallbackInfo<Value>& args)
 
 	String::Utf8Value license(isolate, args[0]);
 	char *pszLicense = *license;
-	DBR_InitLicense(hBarcode, pszLicense);
+	char errorMsgBuffer[512];
+	// Click https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr to get a trial license.
+	DBR_InitLicense(pszLicense, errorMsgBuffer, 512);
+	printf("DBR_InitLicense: %s\n", errorMsgBuffer);
 }
 
 /*

@@ -3,7 +3,8 @@ var barcodeTypes = dbr.barcodeTypes;
 var readline = require('readline');
 var fs = require('fs');
 
-ret = dbr.initLicense('t0068MgAAABFQA39jYCWHtte4UvAS5+TiD6ciBPjNkepWU2aIc2gw9U4UmCoI1RnRWYLYfDr7gngpEmrjUZ3/+WVtSQ6iJNc=');
+// Get a license key from https://www.dynamsoft.com/customer/license/trialLicense?product=dbr
+dbr.initLicense("LICENSE-KEY");
 
 fs.readFile('base64.txt', 'utf8' , (err, data) => {
 

@@ -22,11 +22,7 @@ var formats = {
     'Aztec': 0x10000000
 }
 
-var barcodeTypes = formats.OneD | formats.PDF417 | formats.QRCode | formats.DataMatrix | formats.Aztec;  // 1D, PDF417, QRCODE, DataMatrix, Aztec Code
-
-// Initialize DBR license.
-// Please visit https://www.dynamsoft.com/CustomerPortal/Portal/Triallicense.aspx or contact support@dynamsoft.com to get a valid trial or full license.
-dbr.initLicense(license);
+var barcodeTypes = formats.OneD | formats.PDF417 | formats.QRCode | formats.DataMatrix | formats.Aztec; 
 
 /*
  * https://github.com/Keillion/www.keillion.site/blob/v0/js/task-queue.js

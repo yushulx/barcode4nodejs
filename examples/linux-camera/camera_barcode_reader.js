@@ -1,4 +1,6 @@
 var dbr = require('../../index.js');
+// Get a license key from https://www.dynamsoft.com/customer/license/trialLicense?product=dbr
+dbr.initLicense("LICENSE-KEY");
 var barcodeTypes = dbr.barcodeTypes;
 
 var v4l2camera = require("v4l2camera");

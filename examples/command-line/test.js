@@ -4,7 +4,8 @@ var readline = require('readline');
 var fs = require('fs');
 
 let template = "";
-
+// Get a license key from https://www.dynamsoft.com/customer/license/trialLicense?product=dbr
+dbr.initLicense("LICENSE-KEY");
 function decodeFileAsync(fileName) {
   dbr.decodeFileAsync(fileName, barcodeTypes, function(err, msg) {
     let result = null;

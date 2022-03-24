@@ -7,6 +7,8 @@ var path = require('path');
 var http = require('http');
 
 var dbr = require('../../index.js');
+// Get a license key from https://www.dynamsoft.com/customer/license/trialLicense?product=dbr
+dbr.initLicense("LICENSE-KEY");
 var barcodeTypes = dbr.barcodeTypes;
 
 function decodeBarcode(res, fileName, barcodeType) {
