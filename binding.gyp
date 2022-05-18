@@ -26,7 +26,7 @@
                             'destination': 'build/Release/',
                             'files': [
                                 './platforms/linux/libDynamsoftBarcodeReader.so',
-                                './platforms/linux/libDynamicPdf.so',
+                                './platforms/linux/libDynamsoftLicenseClient.so',
                             ]
                         }
                     ]
@@ -43,7 +43,7 @@
                             'destination': 'build/Release/',
                             'files': [
                                 './platforms/windows/DynamsoftBarcodeReaderx64.dll',
-                                './platforms/windows/DynamicPdfx64.dll',
+                                './platforms/windows/DynamsoftLicenseClientx64.dll',
                                 './platforms/windows/vcomp110.dll'
                             ]
                         }
@@ -60,7 +60,8 @@
                         {
                             'destination': '/usr/local/lib/',
                             'files': [
-                                './platforms/macos/libDynamsoftBarcodeReader.dylib'
+                                './platforms/macos/libDynamsoftBarcodeReader.dylib',
+                                './platforms/macos/libDynamsoftLicenseClient.dylib',
                             ]
                         }
                     ]
