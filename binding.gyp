@@ -3,21 +3,22 @@
         {
             'target_name': "dbr",
             'sources': ["src/dbr.cc"],
-            "cflags" : [
-                "-std=c++11"
-            ],
-            'ldflags': [
-                        "-Wl,-rpath,'$$ORIGIN'"
-            ],
             'include_dirs': [
-                        "./"
+                "./"
             ],
             'conditions': [
                 ['OS=="linux"', {
                     'defines': [
                         'LINUX_DBR',
                     ],
-                    
+
+                    "cflags": [
+                        "-std=c++11"
+                    ],
+                    'ldflags': [
+                        "-Wl,-rpath,'$$ORIGIN'"
+                    ],
+
                     'libraries': [
                         "-lDynamsoftBarcodeReader", "-L../platforms/linux"
                     ],
@@ -27,6 +28,7 @@
                             'files': [
                                 './platforms/linux/libDynamsoftBarcodeReader.so',
                                 './platforms/linux/libDynamsoftLicenseClient.so',
+                                './platforms/linux/libDynamicPdf.so',
                             ]
                         }
                     ]
@@ -44,7 +46,8 @@
                             'files': [
                                 './platforms/windows/DynamsoftBarcodeReaderx64.dll',
                                 './platforms/windows/DynamsoftLicenseClientx64.dll',
-                                './platforms/windows/vcomp110.dll'
+                                './platforms/windows/vcomp110.dll',
+                                './platforms/windows/DynamicPdfx64.dll',
                             ]
                         }
                     ]
@@ -53,15 +56,22 @@
                     'defines': [
                         'MAC_DBR',
                     ],
+                    "cflags": [
+                        "-std=c++11"
+                    ],
+                    'ldflags': [
+                        "-Wl,-rpath,@loader_path"
+                    ],
                     'libraries': [
                         "-lDynamsoftBarcodeReader", "-L../platforms/macos"
                     ],
                     'copies': [
                         {
-                            'destination': '/usr/local/lib/',
+                            'destination': 'build/Release/',
                             'files': [
                                 './platforms/macos/libDynamsoftBarcodeReader.dylib',
                                 './platforms/macos/libDynamsoftLicenseClient.dylib',
+                                './platforms/macos/libDynamicPdf.dylib',
                             ]
                         }
                     ]
