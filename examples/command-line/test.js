@@ -52,6 +52,14 @@ function decodeFileStreamAsync(fileName) {
           result = msg[index];
           console.log('Format: ' + result['format']);
           console.log('Value : ' + result['value']);
+          console.log('x1: ' + result['x1']);
+          console.log('y1 : ' + result['y1']);
+          console.log('x2: ' + result['x2']);
+          console.log('y2 : ' + result['y2']);
+          console.log('x3: ' + result['x3']);
+          console.log('y3: ' + result['y3']);
+          console.log('x4: ' + result['x4']);
+          console.log('y4 : ' + result['y4']);
         }
         console.log(
             'Done............................................................\n');

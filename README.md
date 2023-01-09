@@ -1,10 +1,10 @@
 # Node.js Barcode & QR Code SDK
 ![version](https://img.shields.io/npm/v/barcode4nodejs.svg)
 
-The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Reader C++ SDK](https://www.dynamsoft.com/barcode-reader/overview/). It helps developers to build Node.js barcode and QR code scanning applications for Windows, Linux, macOS, Raspberry Pi and Jetson Nano.
+The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Reader C++ SDK](https://www.dynamsoft.com/barcode-reader/overview/). It helps developers to build Node.js barcode and QR code scanning applications for **Windows**, **Linux**, **macOS**, **Raspberry Pi** and **Jetson Nano**.
 
 ## Dynamsoft Barcode Reader SDK Version
-[v9.4](https://www.dynamsoft.com/barcode-reader/downloads)
+[v9.6.10](https://www.dynamsoft.com/barcode-reader/downloads)
 
 ## License Key for SDK
 [![](https://img.shields.io/badge/Get-30--day%20FREE%20Trial-blue)](https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr)
@@ -96,7 +96,20 @@ template = JSON.stringify(params);
 const dbr = require('barcode4nodejs');
 dbr.initLicense("DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==")
 dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.formats.DataMatrix | dbr.formats.Aztec, function(err, msg){
-  console.log(msg)
+  console.log(msg);
+  for (index in msg) {
+    result = msg[index];
+    console.log('Format: ' + result['format']);
+    console.log('Value : ' + result['value']);
+    console.log('x1: ' + result['x1']);
+    console.log('y1 : ' + result['y1']);
+    console.log('x2: ' + result['x2']);
+    console.log('y2 : ' + result['y2']);
+    console.log('x3: ' + result['x3']);
+    console.log('y3: ' + result['y3']);
+    console.log('x4: ' + result['x4']);
+    console.log('y4 : ' + result['y4']);
+  }
 }, "");
 ```
 
