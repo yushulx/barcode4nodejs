@@ -19,7 +19,7 @@ jobs:
           npm i node-gyp -g
           node-gyp configure
           node-gyp build
-          node examples\command-line\test.js -f examples\command-line\test.tif 
+          node examples/command-line/test.js -f examples/command-line/test.tif 
           
   upload:
     needs: [build]
