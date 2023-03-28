@@ -1,4 +1,7 @@
 {
+    'variables': {
+        'arch': ["<!(node -e \"console.log(process.arch);\")"],
+    },
     "targets": [
         {
             'target_name': "dbr",
@@ -7,7 +10,7 @@
                 "./"
             ],
             'conditions': [
-                ['OS=="linux" and ARCH=="x64"', {
+                ['OS=="linux"', {
                     'defines': [
                         'LINUX_DBR',
                     ],
@@ -20,67 +23,15 @@
                     ],
 
                     'libraries': [
-                        "-lDynamsoftBarcodeReader", "-L../platforms/linux"
+                        "-lDynamsoftBarcodeReader", "-L../platforms/linux/<(arch)"
                     ],
                     'copies': [
                         {
                             'destination': 'build/Release/',
                             'files': [
-                                './platforms/linux/libDynamsoftBarcodeReader.so',
-                                './platforms/linux/libDynamsoftLicenseClient.so',
-                                './platforms/linux/libDynamicPdf.so',
-                            ]
-                        }
-                    ]
-                }],
-                ['OS=="linux" and ARCH=="arm"', {
-                    'defines': [
-                        'LINUX_DBR',
-                    ],
-
-                    "cflags": [
-                        "-std=c++11"
-                    ],
-                    'ldflags': [
-                        "-Wl,-rpath,'$$ORIGIN'"
-                    ],
-
-                    'libraries': [
-                        "-lDynamsoftBarcodeReader", "-L../platforms/arm32"
-                    ],
-                    'copies': [
-                        {
-                            'destination': 'build/Release/',
-                            'files': [
-                                './platforms/arm32/libDynamsoftBarcodeReader.so',
-                                './platforms/arm32/libDynamsoftLicenseClient.so',
-                                './platforms/arm32/libDynamicPdf.so',
-                            ]
-                        }
-                    ]
-                }],
-                ['OS=="linux" and ARCH=="arm64"', {
-                    'defines': [
-                        'LINUX_DBR',
-                    ],
-
-                    "cflags": [
-                        "-std=c++11"
-                    ],
-                    'ldflags': [
-                        "-Wl,-rpath,'$$ORIGIN'"
-                    ],
-
-                    'libraries': [
-                        "-lDynamsoftBarcodeReader", "-L../platforms/aarch64"
-                    ],
-                    'copies': [
-                        {
-                            'destination': 'build/Release/',
-                            'files': [
-                                './platforms/aarch64/libDynamsoftBarcodeReader.so',
-                                './platforms/aarch64/libDynamsoftLicenseClient.so',
-                                './platforms/aarch64/libDynamicPdf.so',
+                                './platforms/linux/<(arch)/libDynamsoftBarcodeReader.so',
+                                './platforms/linux/<(arch)/libDynamsoftLicenseClient.so',
+                                './platforms/linux/<(arch)/libDynamicPdf.so',
                             ]
                         }
                     ]
