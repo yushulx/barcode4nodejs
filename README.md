@@ -1,6 +1,4 @@
 # Node.js Barcode & QR Code SDK
-![version](https://img.shields.io/npm/v/barcode4nodejs.svg)
-
 The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Reader C++ SDK](https://www.dynamsoft.com/barcode-reader/overview/). It helps developers to build Node.js barcode and QR code scanning applications for **Windows**, **Linux**, **macOS**, **Raspberry Pi** and **Jetson Nano**.
 
 ## Dynamsoft Barcode Reader SDK Version
@@ -60,12 +58,12 @@ The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Re
   - UK Royal Mail
 
 ## API
-- initLicense(license-key)
-- decodeFileAsync(fileName, barcodeTypes, callback, template)
-- decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback, template)
-- decodeBase64Async(base64, barcodeTypes, callback, template)
-- decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)
-- decodeBufferAsync(buffer, width, height, stride, barcodeTypes, callback, template, maxBufferLength)
+- `initLicense(license-key)`
+- `decodeFileAsync(fileName, barcodeTypes, callback, template)` or `await decodeFileAsync(fileName, barcodeTypes, template)`
+- `decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback, template)` or `await decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, template)`
+- `decodeBase64Async(base64, barcodeTypes, callback, template)` or `await decodeBase64Async(base64, barcodeTypes, template)`
+- `decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)` or `await decodeYUYVAsync(buffer, width, height, barcodeTypes, template)`
+- `decodeBufferAsync(buffer, width, height, stride, barcodeTypes, callback, template, maxBufferLength)` or `await decodeBufferAsync(buffer, width, height, stride, barcodeTypes, template, maxBufferLength)`
 
 ## Template Usage
 1. Visit the [barcode reader online demo](https://demo.dynamsoft.com/barcode-reader/). 
@@ -111,6 +109,16 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
     console.log('y4 : ' + result['y4']);
   }
 }, "");
+
+// Or
+(async function () {
+  try {
+    var result = await dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.formats.DataMatrix | dbr.formats.Aztec, "");
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+})();
 ```
 
 ## How to Customize and Build the Module 
