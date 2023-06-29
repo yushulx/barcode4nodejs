@@ -12,6 +12,7 @@ else {
 }
 
 var dbr = require('./build/Release/dbr');
+var barcodeReader = dbr.BarcodeReader();
 var formats = {
     'OneD': 0x000007FF,
     'PDF417': 0x02000000,
@@ -33,7 +34,7 @@ module.exports = {
             template = arguments[2];
         }
         const promise = new Promise((resolve, reject) => {
-            dbr.decodeFileAsync(arguments[0], arguments[1], function (err, msg) {
+            barcodeReader.decodeFileAsync(arguments[0], arguments[1], function (err, msg) {
                 if (err) {
                     reject(err);
                 } else {
@@ -60,7 +61,7 @@ module.exports = {
             template = arguments[3];
         }
         const promise = new Promise((resolve, reject) => {
-            dbr.decodeFileStreamAsync(arguments[0], arguments[1], arguments[2], function (err, msg) {
+            barcodeReader.decodeFileStreamAsync(arguments[0], arguments[1], arguments[2], function (err, msg) {
                 if (err) {
                     reject(err);
                 } else {
@@ -87,7 +88,7 @@ module.exports = {
             template = arguments[2];
         }
         const promise = new Promise((resolve, reject) => {
-            dbr.decodeBase64Async(arguments[0], arguments[1], function (err, msg) {
+            barcodeReader.decodeBase64Async(arguments[0], arguments[1], function (err, msg) {
                 if (err) {
                     reject(err);
                 } else {
@@ -114,7 +115,34 @@ module.exports = {
             template = arguments[4];
         }
         const promise = new Promise((resolve, reject) => {
-            dbr.decodeYUYVAsync(arguments[0], arguments[1], arguments[2], arguments[3], function (err, msg) {
+            barcodeReader.decodeYUYVAsync(arguments[0], arguments[1], arguments[2], arguments[3], function (err, msg) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(msg);
+                }
+            }, template);
+        });
+
+        if (callback && typeof callback === 'function') {
+            promise
+                .then(result => callback(null, result))
+                .catch(err => callback(err));
+        } else {
+            return promise;
+        }
+    },
+    decodeBufferAsync: function () {
+        var callback = arguments[5];
+        var template = "";
+        if (callback && typeof callback === 'function') {
+            template = arguments[6];
+        }
+        else {
+            template = arguments[5];
+        }
+        const promise = new Promise((resolve, reject) => {
+            barcodeReader.decodeBufferAsync(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], function (err, msg) {
                 if (err) {
                     reject(err);
                 } else {
@@ -132,34 +160,8 @@ module.exports = {
         }
     },
     formats: formats,
-    initLicense: dbr.initLicense,
     barcodeTypes: barcodeTypes,
-    setParameters: dbr.setParameters,
-    decodeBufferAsync: function () {
-        var callback = arguments[5];
-        var template = "";
-        if (callback && typeof callback === 'function') {
-            template = arguments[6];
-        }
-        else {
-            template = arguments[5];
-        }
-        const promise = new Promise((resolve, reject) => {
-            dbr.decodeBufferAsync(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], function (err, msg) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(msg);
-                }
-            }, template);
-        });
-
-        if (callback && typeof callback === 'function') {
-            promise
-                .then(result => callback(null, result))
-                .catch(err => callback(err));
-        } else {
-            return promise;
-        }
-    },
+    BarcodeReader: dbr.BarcodeReader,
+    getVersion: dbr.getVersionNumber,
+    initLicense: dbr.initLicense,
 };

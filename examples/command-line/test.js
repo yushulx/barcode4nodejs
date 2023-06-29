@@ -46,7 +46,7 @@ function decodeFileStreamAsync(fileName) {
     fs.read(fd, buffer, 0, fileSize, 0, function (err, bytesRead, data) {
       (async function () {
         try {
-          var result = await dbr.decodeFileStreamAsync(buffer, fileSize, barcodeTypes);
+          var result = await dbr.decodeFileStreamAsync(buffer, fileSize, barcodeTypes, template);
           console.log(result);
         } catch (error) {
           console.log(error);
@@ -142,8 +142,7 @@ if (args.includes('-f')) {
   if (args.includes('-t')) {
     let tIndex = args.indexOf('-t');
     if (args[tIndex + 1]) {
-      templatefile = fs.readFileSync(args[tIndex + 1])
-      dbr.setParameters(templatefile);
+      template = fs.readFileSync(args[tIndex + 1])
     }
     else {
       console.log('Please add a template file.');
@@ -181,7 +180,7 @@ if (args.includes('-f')) {
     // decodeYUYVAsync(answer, 640, 480);
     (async function () {
       try {
-        var result = await dbr.decodeFileAsync(answer, barcodeTypes, "");
+        var result = await dbr.decodeFileAsync(answer, barcodeTypes, template);
         console.log(result);
       } catch (error) {
         console.log(error);
