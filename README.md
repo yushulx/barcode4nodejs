@@ -106,7 +106,8 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
     console.log('x3: ' + result['x3']);
     console.log('y3: ' + result['y3']);
     console.log('x4: ' + result['x4']);
-    console.log('y4 : ' + result['y4']);
+    console.log('y4: ' + result['y4']);
+    console.log('decoding time: ' + result['time']);
   }
 }, "");
 

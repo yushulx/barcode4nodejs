@@ -6,6 +6,22 @@ using namespace v8;
 #define DBR_SUCCESS 1
 #define DEFAULT_MEMORY_SIZE 4096
 
+#if !defined(_WIN32) && !defined(_WIN64)
+#include <sys/time.h>
+
+int gettime()
+{
+	struct timeval time;
+	gettimeofday(&time, NULL);
+	return (int)(time.tv_sec * 1000 * 1000 + time.tv_usec) / 1000;
+}
+#else
+int gettime()
+{
+	return (int)(GetTickCount());
+}
+#endif
+
 typedef enum
 {
 	NO_BUFFER,
@@ -32,6 +48,7 @@ struct BarcodeWorker
 	int stride;		  // image stride
 	std::string base64string; // image as base64 string
 	std::string templateContent;
+	int elapsedTime;
 };
 
 /*
@@ -65,6 +82,7 @@ static void DetectionWorking(uv_work_t *req)
 	}
 
 	// Decode barcodes from different sources
+	int starttime = gettime();
 	int ret = 0;
 	switch (worker->bufferType)
 	{
@@ -135,6 +153,9 @@ static void DetectionWorking(uv_work_t *req)
 	}
 	}
 
+	int endtime = gettime();
+	int elapsedTime = endtime - starttime;
+
 	if (ret)
 	{
 		printf("Detection error: %s\n", DBR_GetErrorString(ret));
@@ -144,6 +165,7 @@ static void DetectionWorking(uv_work_t *req)
 
 	// Save results to BarcodeWorker
 	worker->errorCode = ret;
+	worker->elapsedTime = elapsedTime;
 
 	// Release BarcodeReader instance
 	if (handler)
@@ -188,6 +210,7 @@ static void DetectionDone(uv_work_t *req, int status)
 			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "y3", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->y3));
 			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "x4", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->x4));
 			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "y4", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->y4));
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "time", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, worker->elapsedTime));
 			barcodeResults->Set(context, Number::New(isolate, i), result);
 		}
 
