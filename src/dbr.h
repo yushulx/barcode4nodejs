@@ -21,11 +21,12 @@ class BarcodeReader : public node::ObjectWrap
 {
 public:
     static void Init(v8::Local<v8::Object> exports);
-
+    void *handler;
+    
 private:
     explicit BarcodeReader();
     ~BarcodeReader();
-
+    static void CreateInstance(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void New(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void DecodeYUYVAsync(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void DecodeFileStreamAsync(const v8::FunctionCallbackInfo<v8::Value> &args);
