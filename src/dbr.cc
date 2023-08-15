@@ -517,7 +517,17 @@ void BarcodeReader::New(const FunctionCallbackInfo<Value> &args)
 	Isolate *isolate = args.GetIsolate();
 	Local<Context> context = isolate->GetCurrentContext();
 	
-	void *handler = DBR_CreateInstance();
+	String::Utf8Value instanceType(isolate, args[0]);
+	
+	void *handler = NULL;
+	if (strcmp(*instanceType, "concurrent") == 0) 
+	{
+		handler = DBR_GetInstance();
+	}
+	else
+	{
+		handler = DBR_CreateInstance();
+	}
 	
 	if (args.IsConstructCall())
 	{
