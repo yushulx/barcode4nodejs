@@ -242,8 +242,21 @@ void InitLicense(const FunctionCallbackInfo<Value> &args)
 	char *pszLicense = *license;
 	char errorMsgBuffer[512];
 	// Click https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr to get a trial license.
-	DBR_InitLicense(pszLicense, errorMsgBuffer, 512);
+	int ret = DBR_InitLicense(pszLicense, errorMsgBuffer, 512);
 	printf("DBR_InitLicense: %s\n", errorMsgBuffer);
+	args.GetReturnValue().Set(Number::New(isolate, ret));
+}
+
+/*
+ *	setLicenseCachePath(path)
+ */
+void SetLicenseCachePath(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = args.GetIsolate();
+
+	String::Utf8Value cachePath(isolate, args[0]);
+	int ret = DBR_SetLicenseCachePath(*cachePath);
+	args.GetReturnValue().Set(Number::New(isolate, ret));
 }
 
 /*
@@ -575,6 +588,7 @@ void Init(Local<Object> exports)
 {
 	NODE_SET_METHOD(exports, "initLicense", InitLicense);
 	NODE_SET_METHOD(exports, "getVersionNumber", GetVersionNumber);
+	NODE_SET_METHOD(exports, "setLicenseCachePath", SetLicenseCachePath);
 
 	BarcodeReader::Init(exports);
 }
