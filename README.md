@@ -107,6 +107,7 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
     console.log('y3: ' + result['y3']);
     console.log('x4: ' + result['x4']);
     console.log('y4: ' + result['y4']);
+    console.log('page: ' + result['page']);
     console.log('decoding time: ' + result['time']);
   }
 }, "");
@@ -150,8 +151,12 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
 - examples/command-line
 
     ```
-    node test.js -f test.tif
+    node test.js -f MultiPage.pdf
     ```
+
+    ![image](https://github.com/yushulx/nodejs-barcode/assets/2202306/897ab95a-6d94-4e58-9a3f-ab040ea48240)
+
+    
 - examples/web
 
     ```
