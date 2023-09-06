@@ -211,6 +211,7 @@ static void DetectionDone(uv_work_t *req, int status)
 			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "y3", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->y3));
 			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "x4", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->x4));
 			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "y4", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->y4));
+			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "page", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, pResults->results[i]->localizationResult->pageNumber));
 			result->DefineOwnProperty(context, String::NewFromUtf8(isolate, "time", NewStringType::kNormal).ToLocalChecked(), Number::New(isolate, worker->elapsedTime));
 			barcodeResults->Set(context, Number::New(isolate, i), result);
 		}
