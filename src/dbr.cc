@@ -167,12 +167,6 @@ static void DetectionWorking(uv_work_t *req)
 	// Save results to BarcodeWorker
 	worker->errorCode = ret;
 	worker->elapsedTime = elapsedTime;
-
-	// Release BarcodeReader instance
-	// if (handler)
-	// {
-	// 	DBR_DestroyInstance(handler);
-	// }
 }
 
 /*
@@ -474,6 +468,30 @@ void BarcodeReader::DecodeBase64Async(const FunctionCallbackInfo<Value> &args)
 }
 
 /*
+ *	destroyInstance()
+ */
+void BarcodeReader::DestroyInstance(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = args.GetIsolate();
+	Local<Context> context = isolate->GetCurrentContext();
+
+	Local<Object> jsObj = args.Holder(); 
+	BarcodeReader* obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+
+	if (obj->handler)
+	{
+		if (obj->instanceType == "concurrent") {
+			DBR_RecycleInstance(obj->handler);
+			obj->handler = NULL;
+		}
+		else {
+			DBR_DestroyInstance(obj->handler);
+			obj->handler = NULL;
+		}
+	}
+}
+
+/*
  *	GetVersionNumber()
  *
  *	returns the version number of the dll
@@ -491,7 +509,14 @@ BarcodeReader::BarcodeReader() {}
 BarcodeReader::~BarcodeReader() {
 	if (handler)
 	{
-		DBR_DestroyInstance(handler);
+		if (instanceType == "concurrent") {
+			DBR_RecycleInstance(handler);
+			handler = NULL;
+		}
+		else {
+			DBR_DestroyInstance(handler);
+			handler = NULL;
+		}
 	}
 }
 
@@ -516,6 +541,7 @@ void BarcodeReader::Init(Local<Object> exports)
 	NODE_SET_PROTOTYPE_METHOD(tpl, "decodeFileAsync", DecodeFileAsync);
 	NODE_SET_PROTOTYPE_METHOD(tpl, "decodeBase64Async", DecodeBase64Async);
 	NODE_SET_PROTOTYPE_METHOD(tpl, "decodeBufferAsync", DecodeBufferAsync);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "destroyInstance", DestroyInstance);
 
 	Local<Function> constructor = tpl->GetFunction(context).ToLocalChecked();
 	// Static methods
@@ -548,6 +574,7 @@ void BarcodeReader::New(const FunctionCallbackInfo<Value> &args)
 		// Invoked as constructor: `new BarcodeReader(...)`
 		BarcodeReader *obj = new BarcodeReader();
 		obj->handler = handler;
+		obj->instanceType = *instanceType;
 		obj->Wrap(args.This());
 		args.GetReturnValue().Set(args.This());
 	}
@@ -573,7 +600,6 @@ void BarcodeReader::CreateInstance(const v8::FunctionCallbackInfo<v8::Value> &ar
 	void *handler = DBR_GetInstance();
 	if (!handler)
 	{
-		printf("DBR_GetInstance cannot work\n");
 		args.GetReturnValue().Set(Null(isolate));
 	}
 	else 

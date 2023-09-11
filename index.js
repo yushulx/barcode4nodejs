@@ -177,5 +177,9 @@ module.exports = {
     BarcodeReader: dbr.BarcodeReader,
     getVersion: dbr.getVersionNumber,
     initLicense: dbr.initLicense,
-    setLicenseCachePath: dbr.setLicenseCachePath
+    setLicenseCachePath: dbr.setLicenseCachePath,
+    destroyInstance: function() {
+        barcodeReader.destroyInstance();
+        barcodeReader = null;
+    }
 };

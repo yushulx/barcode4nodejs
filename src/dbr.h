@@ -22,6 +22,7 @@ class BarcodeReader : public node::ObjectWrap
 public:
     static void Init(v8::Local<v8::Object> exports);
     void *handler;
+    std::string instanceType;
     
 private:
     explicit BarcodeReader();
@@ -33,6 +34,7 @@ private:
     static void DecodeFileAsync(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void DecodeBase64Async(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void DecodeBufferAsync(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void DestroyInstance(const v8::FunctionCallbackInfo<v8::Value> &args);
 };
 
 #endif
