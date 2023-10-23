@@ -41,11 +41,13 @@ module.exports = {
         const promise = new Promise((resolve, reject) => {
             checkBarcodeReader();
             barcodeReader.decodeFileAsync(arguments[0], arguments[1], function (err, msg) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(msg);
-                }
+                setTimeout(() => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(msg);
+                    }
+                }, 0);
             }, template);
         });
 
@@ -69,11 +71,14 @@ module.exports = {
         const promise = new Promise((resolve, reject) => {
             checkBarcodeReader();
             barcodeReader.decodeFileStreamAsync(arguments[0], arguments[1], arguments[2], function (err, msg) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(msg);
-                }
+                setTimeout(() => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(msg);
+                    }
+                }, 0);
+
             }, template);
         });
 
@@ -97,11 +102,13 @@ module.exports = {
         const promise = new Promise((resolve, reject) => {
             checkBarcodeReader();
             barcodeReader.decodeBase64Async(arguments[0], arguments[1], function (err, msg) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(msg);
-                }
+                setTimeout(() => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(msg);
+                    }
+                }, 0);
             }, template);
         });
 
@@ -125,11 +132,13 @@ module.exports = {
         const promise = new Promise((resolve, reject) => {
             checkBarcodeReader();
             barcodeReader.decodeYUYVAsync(arguments[0], arguments[1], arguments[2], arguments[3], function (err, msg) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(msg);
-                }
+                setTimeout(() => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(msg);
+                    }
+                }, 0);
             }, template);
         });
 
@@ -153,11 +162,13 @@ module.exports = {
         const promise = new Promise((resolve, reject) => {
             checkBarcodeReader();
             barcodeReader.decodeBufferAsync(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], function (err, msg) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(msg);
-                }
+                setTimeout(() => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(msg);
+                    }
+                }, 0);
             }, template);
         });
 
@@ -169,7 +180,7 @@ module.exports = {
             return promise;
         }
     },
-    setInstanceType: function(type) {
+    setInstanceType: function (type) {
         instanceType = type;
     },
     formats: formats,
@@ -178,7 +189,7 @@ module.exports = {
     getVersion: dbr.getVersionNumber,
     initLicense: dbr.initLicense,
     setLicenseCachePath: dbr.setLicenseCachePath,
-    destroyInstance: function() {
+    destroyInstance: function () {
         barcodeReader.destroyInstance();
         barcodeReader = null;
     }
