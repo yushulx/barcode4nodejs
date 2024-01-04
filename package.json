@@ -1,6 +1,6 @@
 {
   "name": "barcode4nodejs",
-  "version": "9.6.30",
+  "version": "9.6.31",
   "description": "Node.js bindings to Dynamsoft Barcode Reader C/C++ SDK.",
   "keywords": [
     "barcode",
@@ -26,7 +26,7 @@
   "scripts": {
     "configure": "node-gyp configure",
     "build": "node-gyp configure build --jobs max",
-    "postinstall": "install_name_tool -change @rpath/libDynamsoftBarcodeReader.dylib @loader_path/libDynamsoftBarcodeReader.dylib build/Release/dbr.node",
+    "postinstall": "node ./scripts/postinstall.js",
     "clean": "node-gyp clean"
   },
   "gypfile": true
