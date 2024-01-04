@@ -26,6 +26,7 @@
   "scripts": {
     "configure": "node-gyp configure",
     "build": "node-gyp configure build --jobs max",
+    "postinstall": "install_name_tool -change @rpath/libDynamsoftBarcodeReader.dylib @loader_path/libDynamsoftBarcodeReader.dylib build/Release/dbr.node",
     "clean": "node-gyp clean"
   },
   "gypfile": true
