@@ -2,7 +2,7 @@
 The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Reader C++ SDK](https://www.dynamsoft.com/barcode-reader/overview/). It helps developers to build Node.js barcode and QR code scanning applications for **Windows**, **Linux**, **macOS**, **Raspberry Pi** and **Jetson Nano**.
 
 ## Dynamsoft Barcode Reader SDK Version
-**v9.6.30**
+**v9.6.40**
 
 ## License Key for SDK
 [![](https://img.shields.io/badge/Get-30--day%20FREE%20Trial-blue)](https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr)

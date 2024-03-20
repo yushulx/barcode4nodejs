@@ -3641,7 +3641,7 @@ extern "C" {
 	DBR_API void* DBR_GetInstance();
 
 	/**
-	 *Restroys an instance of Dynamsoft Barcode Reader.
+	 *Destroys an instance of Dynamsoft Barcode Reader.
 	 *
 	 */
 	DBR_API void DBR_RecycleInstance(void* barcodeReader);
