@@ -13,16 +13,16 @@ var barcodeTypes = dbr.barcodeTypes;
 
 function decodeBarcode(res, fileName, barcodeType) {
     // read barcode using dbr
-    dbr.decodeFileAsync(fileName, barcodeType, function(err, msg) {
-            var response = 'Totol count: ' + msg.length;
-            var result = null;
-            for (let index in msg) {
-                result = msg[index]
-                response += '<p>' + result['format'] + ': ';
-                response += result['value'] + '<p>';
-            }
-            res.send(response);
-        }, "");
+    dbr.decodeFileAsync(fileName, barcodeType, function (err, msg) {
+        var response = 'Totol count: ' + msg.length;
+        var result = null;
+        for (let index in msg) {
+            result = msg[index]
+            response += '<p>' + result['format'] + ': ';
+            response += result['value'] + '<p>';
+        }
+        res.send(response);
+    }, "");
 }
 
 app.use(express.static(__dirname));
@@ -53,9 +53,9 @@ app.post('/upload', function (req, res) {
                         var fileName = path.join(__dirname, dir, files.fileToUpload.name);
                         console.log(fileName);
                         fs.writeFile(fileName, data, function (err) {
-                            if (err) 
+                            if (err)
                                 throw err;
-                            
+
                             decodeBarcode(res, fileName, barcodeType);
                         });
                     });
@@ -79,19 +79,19 @@ app.post('/upload', function (req, res) {
                     console.log(error);
                     res.send('Invalid image!');
                 }
-                
+
             }
         });
 
     });
 });
 
-var server = app.listen(2018, function () {
+var server = app.listen(2024, function () {
     var host = server
         .address()
         .address;
     var port = server
         .address()
         .port;
-    console.log('listening at http://%s:%s', host, port);
+    console.log('listening at http://localhost:%s', port);
 });
