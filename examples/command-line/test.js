@@ -48,6 +48,11 @@ function decodeFileStreamAsync(fileName) {
         try {
           var result = await dbr.decodeFileStreamAsync(buffer, fileSize, barcodeTypes, template);
           console.log(result);
+
+          // dbr.destroyInstance();
+          setTimeout(() => {
+            console.log('terminated');
+          }, 1000);
         } catch (error) {
           console.log(error);
         }
