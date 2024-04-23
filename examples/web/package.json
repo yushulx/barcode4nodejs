@@ -5,7 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.19.2",
-    "formidable": "^1.2.1"
+    "formidable": "^3.2.4"
   },
   "author": "yushulx",
   "license": "MIT"
