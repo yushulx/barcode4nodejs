@@ -1,0 +1,18 @@
+{
+  "name": "nodejs-barcode-reader",
+  "version": "1.0.0",
+  "description": "Scan barcodes with a webcam from any web browser",
+  "main": "web.js",
+  "author": "yushulx",
+  "license": "MIT",
+  "dependencies": {
+    "barcode4nodejs": "^9.6.40",
+    "opencv4nodejs": "^5.6.0"
+  },
+  "opencv4nodejs": {
+    "disableAutoBuild": 1,
+    "opencvIncludeDir": "C:\\tools\\opencv\\build\\include",
+    "opencvLibDir": "C:\\tools\\opencv\\build\\x64\\vc15\\lib",
+    "opencvBinDir": "C:\\tools\\opencv\\build\\x64\\vc15\\bin"
+  }
+}

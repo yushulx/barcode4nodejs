@@ -89,10 +89,11 @@ template = JSON.stringify(params);
 ```
 
 ## Quick Usage
+Replace `LICENSE-KEY` with your own license key.
 
 ```js
 const dbr = require('barcode4nodejs');
-dbr.initLicense("DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==")
+dbr.initLicense("LICENSE-KEY")
 dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.formats.DataMatrix | dbr.formats.Aztec, function(err, msg){
   console.log(msg);
   for (index in msg) {
@@ -148,7 +149,7 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
     ```
 
 ## Examples    
-- examples/command-line
+- [Command Line](./examples/command-line/)
 
     ```
     node test.js -f MultiPage.pdf
@@ -157,7 +158,7 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
     ![image](https://github.com/yushulx/nodejs-barcode/assets/2202306/897ab95a-6d94-4e58-9a3f-ab040ea48240)
 
     
-- examples/web
+- [Web](./examples/web/)
 
     ```
     npm install
@@ -165,7 +166,7 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
     ```
     Open `http://localhost:2018/index.htm` in web browsers.
 
-- examples/desktop-electron
+- [Desktop Electron](./examples/desktop-electron/)
 
     ```
     cd src
@@ -176,14 +177,14 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
     npm start
     ```
 
-- examples/linux-camera
+- [Linux Camera](./examples/linux-camera/)
 
     ```
     npm install v4l2camera
     node camera_barcode_reader.js
     ```
 
-- examples/RESTful-service
+- [RESTful Service](./examples/RESTful-service/)
 
     ```
     npm install restify
@@ -192,5 +193,6 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
     
     Open `https://< ip >:2018` to scan barcodes in web browsers.
 
-
+- [OpenCV](./examples/opencv/)
+    
 
