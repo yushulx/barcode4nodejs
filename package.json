@@ -1,6 +1,6 @@
 {
   "name": "barcode4nodejs",
-  "version": "9.6.41",
+  "version": "9.6.42",
   "description": "Node.js bindings to Dynamsoft Barcode Reader C/C++ SDK.",
   "keywords": [
     "barcode",
@@ -30,5 +30,8 @@
     "postinstall": "node ./scripts/postinstall.js",
     "clean": "node-gyp clean"
   },
-  "gypfile": true
+  "gypfile": true,
+  "devDependencies": {
+    "@types/node": "^20.14.2"
+  }
 }

@@ -51,22 +51,33 @@ export type BarcodeResult = {
     y4: number
     page: number
     time: number
+
 }
 
 export interface BarcodeReader {
-    decodeFileAsync(filePath: string, format: formats, callback: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
-    decodeFileStreamAsync(stream: any, length: number, format: formats, callback: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeFileAsync(filePath: string, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeFileAsync(filePath: string, format: formats, template?: string): Promise<BarcodeResult[]>;
+    decodeFileStreamAsync(stream: any, length: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeFileStreamAsync(stream: any, length: number, format: formats, template?: string): Promise<BarcodeResult[]>;
     decodeBase64Async(base64String: string, format: formats, callback: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
-    decodeYUYVAsync(data: any, width: number, height: number, format: formats, callback: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
-    decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, callback: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeBase64Async(base64String: string, format: formats, template?: string): Promise<BarcodeResult[]>;
+    decodeYUYVAsync(data: any, width: number, height: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeYUYVAsync(data: any, width: number, height: number, format: formats, template?: string): Promise<BarcodeResult[]>;
+    decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): Promise<BarcodeResult[]>;
     destroyInstance(): void;
 }
 
-export function decodeFileAsync(filePath: string, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): Promise<BarcodeResult[]>;
-export function decodeFileStreamAsync(stream: any, length: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): Promise<BarcodeResult[]>;
-export function decodeBase64Async(base64String: string, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): Promise<BarcodeResult[]>;
-export function decodeYUYVAsync(data: any, width: number, height: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): Promise<BarcodeResult[]>;
-export function decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): Promise<BarcodeResult[]>;
+export function decodeFileAsync(filePath: string, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+export function decodeFileAsync(filePath: string, format: formats, template?: string): Promise<BarcodeResult[]>;
+export function decodeFileStreamAsync(stream: any, length: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+export function decodeFileStreamAsync(stream: any, length: number, format: formats, template?: string): Promise<BarcodeResult[]>;
+export function decodeBase64Async(base64String: string, format: formats, callback: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+export function decodeBase64Async(base64String: string, format: formats, template?: string): Promise<BarcodeResult[]>;
+export function decodeYUYVAsync(data: any, width: number, height: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+export function decodeYUYVAsync(data: any, width: number, height: number, format: formats, template?: string): Promise<BarcodeResult[]>;
+export function decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+export function decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): Promise<BarcodeResult[]>;
 export function setInstanceType(type: readerTypes): void;
 export function getVersion(): string;
 export function initLicense(license: string): void;
