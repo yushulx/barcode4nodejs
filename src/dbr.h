@@ -23,7 +23,7 @@ public:
     static void Init(v8::Local<v8::Object> exports);
     void *handler;
     std::string instanceType;
-    
+
 private:
     explicit BarcodeReader();
     ~BarcodeReader();
@@ -35,6 +35,12 @@ private:
     static void DecodeBase64Async(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void DecodeBufferAsync(const v8::FunctionCallbackInfo<v8::Value> &args);
     static void DestroyInstance(const v8::FunctionCallbackInfo<v8::Value> &args);
+
+    static void DecodeYUYV(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void DecodeFileStream(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void DecodeFile(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void DecodeBase64(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static void DecodeBuffer(const v8::FunctionCallbackInfo<v8::Value> &args);
 };
 
 #endif

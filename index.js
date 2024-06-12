@@ -91,6 +91,33 @@ module.exports = {
             return promise;
         }
     },
+    decodeFile: function () {
+        var callback = arguments[2];
+        var template = "";
+        if (callback && typeof callback === 'function') {
+            template = arguments[3];
+        }
+        else {
+            template = arguments[2];
+        }
+        checkBarcodeReader();
+        let result;
+        let error;
+        barcodeReader.decodeFile(arguments[0], arguments[1], function (err, msg) {
+            result = msg;
+            error = err;
+        }, template);
+
+        if (callback && typeof callback === 'function') {
+            if (error) {
+                callback(error);
+            } else {
+                callback(null, result);
+            }
+        } else {
+            return result;
+        }
+    },
     decodeFileStreamAsync: function () {
         var callback = arguments[3];
         var template = "";
@@ -120,6 +147,35 @@ module.exports = {
                 .catch(err => callback(err));
         } else {
             return promise;
+        }
+    },
+    decodeFileStream: function () {
+        var callback = arguments[3];
+        var template = "";
+        if (callback && typeof callback === 'function') {
+            template = arguments[4];
+        }
+        else {
+            template = arguments[3];
+        }
+
+        checkBarcodeReader();
+        let result;
+        let error;
+        barcodeReader.decodeFileStream(arguments[0], arguments[1], arguments[2], function (err, msg) {
+            result = msg;
+            error = err;
+        }, template);
+
+        if (callback && typeof callback === 'function') {
+            if (error) {
+                callback(error);
+            } else {
+                callback(null, result);
+            }
+        }
+        else {
+            return result;
         }
     },
     decodeBase64Async: function () {
@@ -152,6 +208,35 @@ module.exports = {
             return promise;
         }
     },
+    decodeBase64: function () {
+        var callback = arguments[2];
+        var template = "";
+        if (callback && typeof callback === 'function') {
+            template = arguments[3];
+        }
+        else {
+            template = arguments[2];
+        }
+
+        checkBarcodeReader();
+        let result;
+        let error;
+        barcodeReader.decodeBase64(arguments[0], arguments[1], function (err, msg) {
+            result = msg;
+            error = err;
+        }, template);
+
+        if (callback && typeof callback === 'function') {
+            if (error) {
+                callback(error);
+            } else {
+                callback(null, result);
+            }
+        }
+        else {
+            return result;
+        }
+    },
     decodeYUYVAsync: function () {
         var callback = arguments[4];
         var template = "";
@@ -182,6 +267,35 @@ module.exports = {
             return promise;
         }
     },
+    decodeYUYV: function () {
+        var callback = arguments[4];
+        var template = "";
+        if (callback && typeof callback === 'function') {
+            template = arguments[5];
+        }
+        else {
+            template = arguments[4];
+        }
+
+        checkBarcodeReader();
+        let result;
+        let error;
+        barcodeReader.decodeYUYV(arguments[0], arguments[1], arguments[2], arguments[3], function (err, msg) {
+            result = msg;
+            error = err;
+        }, template);
+
+        if (callback && typeof callback === 'function') {
+            if (error) {
+                callback(error);
+            } else {
+                callback(null, result);
+            }
+        }
+        else {
+            return result;
+        }
+    },
     decodeBufferAsync: function () {
         var callback = arguments[5];
         var template = "";
@@ -210,6 +324,35 @@ module.exports = {
                 .catch(err => callback(err));
         } else {
             return promise;
+        }
+    },
+    decodeBuffer: function () {
+        var callback = arguments[5];
+        var template = "";
+        if (callback && typeof callback === 'function') {
+            template = arguments[6];
+        }
+        else {
+            template = arguments[5];
+        }
+
+        checkBarcodeReader();
+        let result;
+        let error;
+        barcodeReader.decodeBuffer(arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], function (err, msg) {
+            result = msg;
+            error = err;
+        }, template);
+
+        if (callback && typeof callback === 'function') {
+            if (error) {
+                callback(error);
+            } else {
+                callback(null, result);
+            }
+        }
+        else {
+            return result;
         }
     },
     setInstanceType: function (type) {

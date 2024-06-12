@@ -36,7 +36,7 @@ struct BarcodeWorker
 	uv_work_t request;			   // libuv
 	Persistent<Function> callback; // javascript callback
 	int iFormat;				   // barcode types
-	std::string filename;			   // file name
+	std::string filename;		   // file name
 	TextResultArray *pResults;	   // result pointer
 	unsigned char *buffer;
 	int size;			   // file size
@@ -45,21 +45,15 @@ struct BarcodeWorker
 	int height;			   // image height
 	BufferType bufferType; // buffer type
 	bool useTemplate;
-	int stride;		  // image stride
+	int stride;				  // image stride
 	std::string base64string; // image as base64 string
 	std::string templateContent;
 	int elapsedTime;
 	void *handler;
 };
 
-/*
- *	uv_work_cb
- */
-static void DetectionWorking(uv_work_t *req)
+void ProcessImage(BarcodeWorker *worker)
 {
-	// Get the reference to BarcodeWorker
-	BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
-
 	// Create a barcode reader instance
 	// void *handler = DBR_CreateInstance();
 
@@ -169,18 +163,8 @@ static void DetectionWorking(uv_work_t *req)
 	worker->elapsedTime = elapsedTime;
 }
 
-/*
- *	uv_after_work_cb
- */
-static void DetectionDone(uv_work_t *req, int status)
+void WrapResults(BarcodeWorker *worker, Isolate *isolate, Local<Context> &context)
 {
-	Isolate *isolate = Isolate::GetCurrent();
-	HandleScope scope(isolate);
-	Local<Context> context = isolate->GetCurrentContext();
-
-	// Get the reference to BarcodeWorker
-	BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
-
 	// Get barcode results
 	TextResultArray *pResults = worker->pResults;
 	int errorCode = worker->errorCode;
@@ -220,9 +204,34 @@ static void DetectionDone(uv_work_t *req, int status)
 	Local<Value> argv[argc] = {err, barcodeResults};
 	Local<Function> cb = Local<Function>::New(isolate, worker->callback);
 	cb->Call(context, Null(isolate), argc, argv);
-
-	// Release memory of BarcodeWorker
+	worker->callback.Reset();
 	delete worker;
+}
+
+/*
+ *	uv_work_cb
+ */
+static void DetectionWorking(uv_work_t *req)
+{
+	// Get the reference to BarcodeWorker
+	BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
+
+	ProcessImage(worker);
+}
+
+/*
+ *	uv_after_work_cb
+ */
+static void DetectionDone(uv_work_t *req, int status)
+{
+	Isolate *isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	Local<Context> context = isolate->GetCurrentContext();
+
+	// Get the reference to BarcodeWorker
+	BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
+
+	WrapResults(worker, isolate, context);
 }
 
 /*
@@ -231,6 +240,8 @@ static void DetectionDone(uv_work_t *req, int status)
 void InitLicense(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
 	Local<Context> context = isolate->GetCurrentContext();
 
 	String::Utf8Value license(isolate, args[0]);
@@ -248,6 +259,7 @@ void InitLicense(const FunctionCallbackInfo<Value> &args)
 void SetLicenseCachePath(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
 
 	String::Utf8Value cachePath(isolate, args[0]);
 	int ret = DBR_SetLicenseCachePath(*cachePath);
@@ -260,13 +272,15 @@ void SetLicenseCachePath(const FunctionCallbackInfo<Value> &args)
 void BarcodeReader::DecodeFileAsync(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
 	Local<Context> context = isolate->GetCurrentContext();
 
 	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
-	BarcodeReader* obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
 
 	// Get arguments
-	String::Utf8Value fileName(isolate, args[0]); // file name
+	String::Utf8Value fileName(isolate, args[0]);			// file name
 	int iFormat = args[1]->Int32Value(context).ToChecked(); // barcode types
 	Local<Function> cb = Local<Function>::Cast(args[2]);	// javascript callback function
 	String::Utf8Value templateContent(isolate, args[3]);	// template content
@@ -295,16 +309,59 @@ void BarcodeReader::DecodeFileAsync(const FunctionCallbackInfo<Value> &args)
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
 }
 
+void BarcodeReader::DecodeFile(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
+	Local<Context> context = isolate->GetCurrentContext();
+
+	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+
+	// Get arguments
+	String::Utf8Value fileName(isolate, args[0]);			// file name
+	int iFormat = args[1]->Int32Value(context).ToChecked(); // barcode types
+	Local<Function> cb = Local<Function>::Cast(args[2]);	// javascript callback function
+	String::Utf8Value templateContent(isolate, args[3]);	// template content
+
+	// Initialize BarcodeWorker
+	BarcodeWorker *worker = new BarcodeWorker;
+	worker->request.data = worker;
+	worker->filename = *fileName;
+	worker->callback.Reset(isolate, cb);
+	worker->iFormat = iFormat;
+	worker->pResults = NULL;
+	worker->buffer = NULL;
+	worker->bufferType = NO_BUFFER;
+	worker->templateContent = *templateContent;
+	worker->handler = obj->handler;
+
+	if (worker->templateContent == "undefined" || worker->templateContent.empty())
+	{
+		worker->useTemplate = false;
+	}
+	else
+	{
+		worker->useTemplate = true;
+	}
+
+	ProcessImage(worker);
+	WrapResults(worker, isolate, context);
+}
+
 /*
  *	decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback, template)
  */
 void BarcodeReader::DecodeFileStreamAsync(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
 	Local<Context> context = isolate->GetCurrentContext();
 
 	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
-	BarcodeReader* obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
 
 	// Get arguments
 	unsigned char *buffer = (unsigned char *)node::Buffer::Data(args[0]); // file stream
@@ -337,16 +394,60 @@ void BarcodeReader::DecodeFileStreamAsync(const FunctionCallbackInfo<Value> &arg
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
 }
 
+void BarcodeReader::DecodeFileStream(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
+	Local<Context> context = isolate->GetCurrentContext();
+
+	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+
+	// Get arguments
+	unsigned char *buffer = (unsigned char *)node::Buffer::Data(args[0]); // file stream
+	int fileSize = args[1]->Int32Value(context).ToChecked();			  // file size
+	int iFormat = args[2]->Int32Value(context).ToChecked();				  // barcode types
+	Local<Function> cb = Local<Function>::Cast(args[3]);				  // javascript callback function
+	String::Utf8Value templateContent(isolate, args[4]);				  // template content
+
+	// Initialize BarcodeWorker
+	BarcodeWorker *worker = new BarcodeWorker;
+	worker->request.data = worker;
+	worker->callback.Reset(isolate, cb);
+	worker->iFormat = iFormat;
+	worker->pResults = NULL;
+	worker->buffer = buffer;
+	worker->size = fileSize;
+	worker->bufferType = FILE_STREAM;
+	worker->templateContent = *templateContent;
+	worker->handler = obj->handler;
+
+	if (worker->templateContent == "undefined" || worker->templateContent.empty())
+	{
+		worker->useTemplate = false;
+	}
+	else
+	{
+		worker->useTemplate = true;
+	}
+
+	ProcessImage(worker);
+	WrapResults(worker, isolate, context);
+}
+
 /*
  *	decodeBuffer(buffer, width, height, stride, barcodeTypes, callback, template)
  */
 void BarcodeReader::DecodeBufferAsync(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
 	Local<Context> context = isolate->GetCurrentContext();
 
 	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
-	BarcodeReader* obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
 
 	// Get arguments
 	unsigned char *buffer = (unsigned char *)node::Buffer::Data(args[0]); // file stream
@@ -383,16 +484,64 @@ void BarcodeReader::DecodeBufferAsync(const FunctionCallbackInfo<Value> &args)
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
 }
 
+void BarcodeReader::DecodeBuffer(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
+	Local<Context> context = isolate->GetCurrentContext();
+
+	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+
+	// Get arguments
+	unsigned char *buffer = (unsigned char *)node::Buffer::Data(args[0]); // file stream
+	int width = args[1]->Int32Value(context).ToChecked();				  // image width
+	int height = args[2]->Int32Value(context).ToChecked();				  // image height
+	int stride = args[3]->Int32Value(context).ToChecked();				  // stride
+	int iFormat = args[4]->Int32Value(context).ToChecked();				  // barcode types
+	Local<Function> cb = Local<Function>::Cast(args[5]);				  // javascript callback function
+	String::Utf8Value templateContent(isolate, args[6]);				  // template content
+
+	// Initialize BarcodeWorker
+	BarcodeWorker *worker = new BarcodeWorker;
+	worker->request.data = worker;
+	worker->callback.Reset(isolate, cb);
+	worker->iFormat = iFormat;
+	worker->pResults = NULL;
+	worker->buffer = buffer;
+	worker->width = width;
+	worker->height = height;
+	worker->bufferType = RGB_BUFFER;
+	worker->stride = stride;
+	worker->templateContent = *templateContent;
+	worker->handler = obj->handler;
+
+	if (worker->templateContent == "undefined" || worker->templateContent.empty())
+	{
+		worker->useTemplate = false;
+	}
+	else
+	{
+		worker->useTemplate = true;
+	}
+
+	ProcessImage(worker);
+	WrapResults(worker, isolate, context);
+}
+
 /*
  *	decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)
  */
 void BarcodeReader::DecodeYUYVAsync(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
 	Local<Context> context = isolate->GetCurrentContext();
 
 	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
-	BarcodeReader* obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
 
 	// Get arguments
 	unsigned char *buffer = (unsigned char *)node::Buffer::Data(args[0]); // file stream
@@ -427,16 +576,62 @@ void BarcodeReader::DecodeYUYVAsync(const FunctionCallbackInfo<Value> &args)
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
 }
 
+void BarcodeReader::DecodeYUYV(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
+	Local<Context> context = isolate->GetCurrentContext();
+
+	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+
+	// Get arguments
+	unsigned char *buffer = (unsigned char *)node::Buffer::Data(args[0]); // file stream
+	int width = args[1]->Int32Value(context).ToChecked();				  // image width
+	int height = args[2]->Int32Value(context).ToChecked();				  // image height
+	int iFormat = args[3]->Int32Value(context).ToChecked();				  // barcode types
+	Local<Function> cb = Local<Function>::Cast(args[4]);				  // javascript callback function
+	String::Utf8Value templateContent(isolate, args[5]);				  // template content
+
+	// Initialize BarcodeWorker
+	BarcodeWorker *worker = new BarcodeWorker;
+	worker->request.data = worker;
+	worker->callback.Reset(isolate, cb);
+	worker->iFormat = iFormat;
+	worker->pResults = NULL;
+	worker->buffer = buffer;
+	worker->width = width;
+	worker->height = height;
+	worker->bufferType = YUYV_BUFFER;
+	worker->templateContent = *templateContent;
+	worker->handler = obj->handler;
+
+	if (worker->templateContent == "undefined" || worker->templateContent.empty())
+	{
+		worker->useTemplate = false;
+	}
+	else
+	{
+		worker->useTemplate = true;
+	}
+
+	ProcessImage(worker);
+	WrapResults(worker, isolate, context);
+}
+
 /*
  *	decodeBase64Async(base64, barcodeTypes, callback, template)
  */
 void BarcodeReader::DecodeBase64Async(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
 	Local<Context> context = isolate->GetCurrentContext();
 
 	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
-	BarcodeReader* obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
 
 	// Get arguments
 	String::Utf8Value base64(isolate, args[0]);				// file name
@@ -467,24 +662,68 @@ void BarcodeReader::DecodeBase64Async(const FunctionCallbackInfo<Value> &args)
 	uv_queue_work(uv_default_loop(), &worker->request, (uv_work_cb)DetectionWorking, (uv_after_work_cb)DetectionDone);
 }
 
+void BarcodeReader::DecodeBase64(const FunctionCallbackInfo<Value> &args)
+{
+	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
+	Local<Context> context = isolate->GetCurrentContext();
+
+	Local<Object> jsObj = args.Holder(); // The JavaScript object this function was called on
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+
+	// Get arguments
+	String::Utf8Value base64(isolate, args[0]);				// file name
+	int iFormat = args[1]->Int32Value(context).ToChecked(); // barcode types
+	Local<Function> cb = Local<Function>::Cast(args[2]);	// javascript callback function
+	String::Utf8Value templateContent(isolate, args[3]);	// template content
+
+	// Initialize BarcodeWorker
+	BarcodeWorker *worker = new BarcodeWorker;
+	worker->request.data = worker;
+	worker->callback.Reset(isolate, cb);
+	worker->iFormat = iFormat;
+	worker->pResults = NULL;
+	worker->base64string = *base64;
+	worker->bufferType = BASE64;
+	worker->templateContent = *templateContent;
+	worker->handler = obj->handler;
+
+	if (worker->templateContent == "undefined" || worker->templateContent.empty())
+	{
+		worker->useTemplate = false;
+	}
+	else
+	{
+		worker->useTemplate = true;
+	}
+
+	ProcessImage(worker);
+	WrapResults(worker, isolate, context);
+}
+
 /*
  *	destroyInstance()
  */
 void BarcodeReader::DestroyInstance(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
+
 	Local<Context> context = isolate->GetCurrentContext();
 
-	Local<Object> jsObj = args.Holder(); 
-	BarcodeReader* obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
+	Local<Object> jsObj = args.Holder();
+	BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(jsObj);
 
 	if (obj->handler)
 	{
-		if (obj->instanceType == "concurrent") {
+		if (obj->instanceType == "concurrent")
+		{
 			DBR_RecycleInstance(obj->handler);
 			obj->handler = NULL;
 		}
-		else {
+		else
+		{
 			DBR_DestroyInstance(obj->handler);
 			obj->handler = NULL;
 		}
@@ -506,14 +745,17 @@ void GetVersionNumber(const FunctionCallbackInfo<Value> &args)
 
 BarcodeReader::BarcodeReader() {}
 
-BarcodeReader::~BarcodeReader() {
+BarcodeReader::~BarcodeReader()
+{
 	if (handler)
 	{
-		if (instanceType == "concurrent") {
+		if (instanceType == "concurrent")
+		{
 			DBR_RecycleInstance(handler);
 			handler = NULL;
 		}
-		else {
+		else
+		{
 			DBR_DestroyInstance(handler);
 			handler = NULL;
 		}
@@ -543,6 +785,12 @@ void BarcodeReader::Init(Local<Object> exports)
 	NODE_SET_PROTOTYPE_METHOD(tpl, "decodeBufferAsync", DecodeBufferAsync);
 	NODE_SET_PROTOTYPE_METHOD(tpl, "destroyInstance", DestroyInstance);
 
+	NODE_SET_PROTOTYPE_METHOD(tpl, "decodeYUYV", DecodeYUYV);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "decodeFileStream", DecodeFileStream);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "decodeFile", DecodeFile);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "decodeBase64", DecodeBase64);
+	NODE_SET_PROTOTYPE_METHOD(tpl, "decodeBuffer", DecodeBuffer);
+
 	Local<Function> constructor = tpl->GetFunction(context).ToLocalChecked();
 	// Static methods
 	NODE_SET_METHOD(v8::Local<v8::Object>::Cast(constructor), "createInstance", CreateInstance);
@@ -555,12 +803,13 @@ void BarcodeReader::Init(Local<Object> exports)
 void BarcodeReader::New(const FunctionCallbackInfo<Value> &args)
 {
 	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
 	Local<Context> context = isolate->GetCurrentContext();
-	
+
 	String::Utf8Value instanceType(isolate, args[0]);
-	
+
 	void *handler = NULL;
-	if (strcmp(*instanceType, "concurrent") == 0) 
+	if (strcmp(*instanceType, "concurrent") == 0)
 	{
 		handler = DBR_GetInstance();
 	}
@@ -568,7 +817,7 @@ void BarcodeReader::New(const FunctionCallbackInfo<Value> &args)
 	{
 		handler = DBR_CreateInstance();
 	}
-	
+
 	if (args.IsConstructCall())
 	{
 		// Invoked as constructor: `new BarcodeReader(...)`
@@ -587,14 +836,16 @@ void BarcodeReader::New(const FunctionCallbackInfo<Value> &args)
 			args.Data().As<Object>()->GetInternalField(0).As<Function>();
 		Local<Object> result =
 			cons->NewInstance(context, argc, argv).ToLocalChecked();
-		BarcodeReader* obj = ObjectWrap::Unwrap<BarcodeReader>(result);
+		BarcodeReader *obj = ObjectWrap::Unwrap<BarcodeReader>(result);
 		obj->handler = handler;
 		args.GetReturnValue().Set(result);
 	}
 }
 
-void BarcodeReader::CreateInstance(const v8::FunctionCallbackInfo<v8::Value> &args) {
-    Isolate *isolate = args.GetIsolate();
+void BarcodeReader::CreateInstance(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+	Isolate *isolate = args.GetIsolate();
+	v8::HandleScope handle_scope(isolate);
 	Local<Context> context = isolate->GetCurrentContext();
 
 	void *handler = DBR_GetInstance();
@@ -602,7 +853,7 @@ void BarcodeReader::CreateInstance(const v8::FunctionCallbackInfo<v8::Value> &ar
 	{
 		args.GetReturnValue().Set(Null(isolate));
 	}
-	else 
+	else
 	{
 		BarcodeReader *obj = new BarcodeReader();
 		obj->handler = handler;

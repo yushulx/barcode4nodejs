@@ -59,11 +59,20 @@ The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Re
 
 ## API
 - `initLicense(license-key)`
+
+**Asynchronous Methods**
 - `decodeFileAsync(fileName, barcodeTypes, callback, template)` or `await decodeFileAsync(fileName, barcodeTypes, template)`
 - `decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback, template)` or `await decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, template)`
 - `decodeBase64Async(base64, barcodeTypes, callback, template)` or `await decodeBase64Async(base64, barcodeTypes, template)`
 - `decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)` or `await decodeYUYVAsync(buffer, width, height, barcodeTypes, template)`
 - `decodeBufferAsync(buffer, width, height, stride, barcodeTypes, callback, template, maxBufferLength)` or `await decodeBufferAsync(buffer, width, height, stride, barcodeTypes, template, maxBufferLength)`
+
+**Synchronous Methods**
+- `decodeFile(fileName, barcodeTypes, callback, template)` or `decodeFile(fileName, barcodeTypes, template)`
+- `decodeFileStream(fileStream, fileSize, barcodeTypes, callback, template)` or `decodeFileStream(fileStream, fileSize, barcodeTypes, template)`
+- `decodeBase64(base64, barcodeTypes, callback, template)` or `decodeBase64(base64, barcodeTypes, template)`
+- `decodeYUYV(buffer, width, height, barcodeTypes, callback, template)` or `decodeYUYV(buffer, width, height, barcodeTypes, template)`
+- `decodeBuffer(buffer, width, height, stride, barcodeTypes, callback, template, maxBufferLength)` or `decodeBuffer(buffer, width, height, stride, barcodeTypes, template, maxBufferLength)`
 
 ## Template Usage
 1. Visit the [barcode reader online demo](https://demo.dynamsoft.com/barcode-reader/). 
