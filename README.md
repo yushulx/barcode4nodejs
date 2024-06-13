@@ -58,21 +58,28 @@ The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Re
   - UK Royal Mail
 
 ## API
-- `initLicense(license-key)`
+- `initLicense(license: string): void`
+- `createInstance(readerType: readerTypes): BarcodeReader`
+- `getVersion(): string`
 
 **Asynchronous Methods**
-- `decodeFileAsync(fileName, barcodeTypes, callback, template)` or `await decodeFileAsync(fileName, barcodeTypes, template)`
-- `decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback, template)` or `await decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, template)`
-- `decodeBase64Async(base64, barcodeTypes, callback, template)` or `await decodeBase64Async(base64, barcodeTypes, template)`
-- `decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)` or `await decodeYUYVAsync(buffer, width, height, barcodeTypes, template)`
-- `decodeBufferAsync(buffer, width, height, stride, barcodeTypes, callback, template, maxBufferLength)` or `await decodeBufferAsync(buffer, width, height, stride, barcodeTypes, template, maxBufferLength)`
+- `decodeFileAsync(filePath: string, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void`
+- `decodeFileAsync(filePath: string, format: formats, template?: string): Promise<BarcodeResult[]>`
+- `decodeFileStreamAsync(stream: any, length: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void`
+- `decodeFileStreamAsync(stream: any, length: number, format: formats, template?: string): Promise<BarcodeResult[]>`
+- `decodeBase64Async(base64String: string, format: formats, callback: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void`
+- `decodeBase64Async(base64String: string, format: formats, template?: string): Promise<BarcodeResult[]>`
+- `decodeYUYVAsync(data: any, width: number, height: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void`
+- `decodeYUYVAsync(data: any, width: number, height: number, format: formats, template?: string): Promise<BarcodeResult[]>`
+- `decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void`
+- `decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): Promise<BarcodeResult[]>`
 
 **Synchronous Methods**
-- `decodeFile(fileName, barcodeTypes, callback, template)` or `decodeFile(fileName, barcodeTypes, template)`
-- `decodeFileStream(fileStream, fileSize, barcodeTypes, callback, template)` or `decodeFileStream(fileStream, fileSize, barcodeTypes, template)`
-- `decodeBase64(base64, barcodeTypes, callback, template)` or `decodeBase64(base64, barcodeTypes, template)`
-- `decodeYUYV(buffer, width, height, barcodeTypes, callback, template)` or `decodeYUYV(buffer, width, height, barcodeTypes, template)`
-- `decodeBuffer(buffer, width, height, stride, barcodeTypes, callback, template, maxBufferLength)` or `decodeBuffer(buffer, width, height, stride, barcodeTypes, template, maxBufferLength)`
+- `decodeFile(filePath: string, format: formats, template?: string): BarcodeResult[]`
+- `decodeFileStream(stream: any, length: number, format: formats, template?: string): BarcodeResult[]`
+- `decodeBase64(base64String: string, format: formats, template?: string): BarcodeResult[]`
+- `decodeYUYV(data: any, width: number, height: number, format: formats, template?: string): BarcodeResult[]`
+- `decodeBuffer(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): BarcodeResult[]`
 
 ## Template Usage
 1. Visit the [barcode reader online demo](https://demo.dynamsoft.com/barcode-reader/). 
