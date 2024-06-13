@@ -1,46 +1,71 @@
+// https://nodejs.org/dist/latest-v12.x/docs/api/addons.html#addons_n_api
 #ifndef DBR_H
 #define DBR_H
 
-#include <node.h>
-#include <node_object_wrap.h>
-
-#include <node_buffer.h>
-#include <string.h>
+#include <napi.h>
+#include <string>
 #include <uv.h>
-
-#include <vector>
-#include <thread>
-#include <queue>
-#include <functional>
-
 #include "DynamsoftCommon.h"
 #include "DynamsoftBarcodeReader.h"
 
-// https://nodejs.org/api/addons.html
-class BarcodeReader : public node::ObjectWrap
+typedef enum
+{
+    NO_BUFFER,
+    FILE_STREAM,
+    YUYV_BUFFER,
+    BASE64,
+    RGB_BUFFER,
+} BufferType;
+
+struct BarcodeWorker
+{
+    uv_work_t request;                // libuv
+    Napi::FunctionReference callback; // javascript callback
+    int iFormat;                      // barcode types
+    std::string filename;             // file name
+    TextResultArray *pResults;        // result pointer
+    unsigned char *buffer;
+    int size;              // file size
+    int errorCode;         // detection error code
+    int width;             // image width
+    int height;            // image height
+    BufferType bufferType; // buffer type
+    bool useTemplate;
+    int stride;               // image stride
+    std::string base64string; // image as base64 string
+    std::string templateContent;
+    int elapsedTime;
+    void *handler;
+};
+
+class BarcodeReader : public Napi::ObjectWrap<BarcodeReader>
 {
 public:
-    static void Init(v8::Local<v8::Object> exports);
+    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+    BarcodeReader(const Napi::CallbackInfo &info);
+    ~BarcodeReader();
+
+private:
     void *handler;
     std::string instanceType;
 
-private:
-    explicit BarcodeReader();
-    ~BarcodeReader();
-    static void CreateInstance(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void New(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DecodeYUYVAsync(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DecodeFileStreamAsync(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DecodeFileAsync(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DecodeBase64Async(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DecodeBufferAsync(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DestroyInstance(const v8::FunctionCallbackInfo<v8::Value> &args);
+    static Napi::FunctionReference constructor;
 
-    static void DecodeYUYV(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DecodeFileStream(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DecodeFile(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DecodeBase64(const v8::FunctionCallbackInfo<v8::Value> &args);
-    static void DecodeBuffer(const v8::FunctionCallbackInfo<v8::Value> &args);
+    Napi::Value DecodeYUYVAsync(const Napi::CallbackInfo &info);
+    Napi::Value DecodeFileStreamAsync(const Napi::CallbackInfo &info);
+    Napi::Value DecodeFileAsync(const Napi::CallbackInfo &info);
+    Napi::Value DecodeBase64Async(const Napi::CallbackInfo &info);
+    Napi::Value DecodeBufferAsync(const Napi::CallbackInfo &info);
+    void DestroyInstance(const Napi::CallbackInfo &info);
+
+    Napi::Value DecodeYUYV(const Napi::CallbackInfo &info);
+    Napi::Value DecodeFileStream(const Napi::CallbackInfo &info);
+    Napi::Value DecodeFile(const Napi::CallbackInfo &info);
+    Napi::Value DecodeBase64(const Napi::CallbackInfo &info);
+    Napi::Value DecodeBuffer(const Napi::CallbackInfo &info);
+
+    static void ProcessImage(BarcodeWorker *worker);
+    static void WrapResults(BarcodeWorker *worker, Napi::Env env, Napi::Object &result);
 };
 
-#endif
+#endif // DBR_H

@@ -66,7 +66,24 @@ export interface BarcodeReader {
     decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
     decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): Promise<BarcodeResult[]>;
     destroyInstance(): void;
+
+    decodeFile(filePath: string, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeFile(filePath: string, format: formats, template?: string): BarcodeResult[];
+    decodeFileStream(stream: any, length: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeFileStream(stream: any, length: number, format: formats, template?: string): BarcodeResult[];
+    decodeBase64(base64String: string, format: formats, callback: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeBase64(base64String: string, format: formats, template?: string): BarcodeResult[];
+    decodeYUYV(data: any, width: number, height: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeYUYV(data: any, width: number, height: number, format: formats, template?: string): BarcodeResult[];
+    decodeBuffer(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
+    decodeBuffer(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): BarcodeResult[];
 }
+
+export function getVersion(): string;
+export function initLicense(license: string): void;
+export function setLicenseCachePath(path: string): void;
+export function destroyInstance(): void;
+export function createInstance(readerType: readerTypes): BarcodeReader;
 
 // Asynchronous API
 export function decodeFileAsync(filePath: string, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
@@ -79,22 +96,10 @@ export function decodeYUYVAsync(data: any, width: number, height: number, format
 export function decodeYUYVAsync(data: any, width: number, height: number, format: formats, template?: string): Promise<BarcodeResult[]>;
 export function decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
 export function decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): Promise<BarcodeResult[]>;
-export function setInstanceType(type: readerTypes): void;
-export function getVersion(): string;
-export function initLicense(license: string): void;
-export function setLicenseCachePath(path: string): void;
-export function destroyInstance(): void;
 
 // Synchronous API
-export function decodeFile(filePath: string, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
 export function decodeFile(filePath: string, format: formats, template?: string): BarcodeResult[];
-export function decodeFileStream(stream: any, length: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
 export function decodeFileStream(stream: any, length: number, format: formats, template?: string): BarcodeResult[];
-export function decodeBase64(base64String: string, format: formats, callback: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
 export function decodeBase64(base64String: string, format: formats, template?: string): BarcodeResult[];
-export function decodeYUYV(data: any, width: number, height: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
 export function decodeYUYV(data: any, width: number, height: number, format: formats, template?: string): BarcodeResult[];
-export function decodeBuffer(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
 export function decodeBuffer(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): BarcodeResult[];
-
-

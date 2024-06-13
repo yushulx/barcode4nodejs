@@ -1,17 +1,6 @@
-if (process.platform === 'win32') {
-    console.log('Windows');
-}
-else if (process.platform === 'linux') {
-    console.log('Linux');
-}
-else if (process.platform === 'darwin') {
-    console.log('macOS');
-}
-else {
-    console.log('Unknown Operating System');
-}
+const loadDbr = require('./nativeLoader');
+const dbr = loadDbr();
 
-var dbr = require('./build/Release/dbr');
 var barcodeReader = null;
 var formats = {
     ALL: 0xFE3FFFFF,
@@ -355,18 +344,20 @@ module.exports = {
             return result;
         }
     },
-    setInstanceType: function (type) {
-        instanceType = type;
-    },
     formats: formats,
     readerTypes: readerTypes,
     barcodeTypes: barcodeTypes,
-    BarcodeReader: dbr.BarcodeReader,
     getVersion: dbr.getVersionNumber,
     initLicense: dbr.initLicense,
     setLicenseCachePath: dbr.setLicenseCachePath,
     destroyInstance: function () {
         barcodeReader.destroyInstance();
         barcodeReader = null;
+    },
+    createInstance: function (readerType) {
+        if (readerType === readerTypes.CONCURRENT) {
+            return new dbr.BarcodeReader(readerTypes.CONCURRENT);
+        }
+        return new dbr.BarcodeReader(readerTypes.DEFAULT);
     }
 };
