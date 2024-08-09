@@ -14,6 +14,7 @@ The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Re
 
     ```
     npm i node-gyp -g
+    npm i node-addon-api -g
     ```
 
 ## Supported Platforms

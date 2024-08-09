@@ -8,12 +8,8 @@
             "sources": ["src/dbr.cc"],
             "include_dirs": [
                 "./",
-                "node_modules/node-addon-api",
-                "<!(node -p \"require('node-addon-api').include\")",
+                "<!(node -e \"try { require.resolve('node-addon-api'); console.log(require('node-addon-api').include); } catch (e) { console.log(require('child_process').execSync('npm root -g').toString().trim() + '/node-addon-api'); }\")",
                 "<!(node -e \"require('child_process').execSync('node -p process.execPath').toString().trim() + '/../../include/node'\")"
-            ],
-            "dependencies": [
-                "<!(node -p \"require('node-addon-api').gyp\")"
             ],
             "conditions": [
                 ["OS=='linux'", {
