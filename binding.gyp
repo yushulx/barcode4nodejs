@@ -6,6 +6,9 @@
         {
             "target_name": "dbr",
             "sources": ["src/dbr.cc"],
+            "defines": [
+                "NAPI_DISABLE_CPP_EXCEPTIONS"
+            ],
             "include_dirs": [
                 "./",
                 "<!(node -e \"try { require.resolve('node-addon-api'); console.log(require('node-addon-api').include); } catch (e) { console.log(require('child_process').execSync('npm root -g').toString().trim() + '/node-addon-api'); }\")",
