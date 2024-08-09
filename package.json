@@ -1,6 +1,6 @@
 {
   "name": "barcode4nodejs",
-  "version": "9.6.46",
+  "version": "9.6.47",
   "description": "Node.js bindings to Dynamsoft Barcode Reader C/C++ SDK.",
   "keywords": [
     "barcode",
@@ -29,10 +29,23 @@
   },
   "homepage": "https://github.com/yushulx/nodejs-barcode#readme",
   "main": "index.js",
+  "files": [
+    "platforms/",
+    "scripts/",
+    "src/",
+    "index.js",
+    "index.d.ts",
+    "binding.gyp",
+    "package.json",
+    "README.md",
+    "LICENSE",
+    "nativeLoader.js"
+  ],
   "types": "index.d.ts",
   "typings": "",
   "scripts": {
     "preinstall": "npm run check-global-deps",
+    "install": "npm run configure && npm run build",
     "configure": "node-gyp configure",
     "build": "node-gyp configure build --jobs max",
     "postinstall": "node ./scripts/postinstall.js",
@@ -43,8 +56,5 @@
   "devDependencies": {
     "@types/node": "^20.14.2",
     "node-gyp": "^10.1.0"
-  },
-  "dependencies": {
-    "barcode4nodejs": "file:"
   }
 }
