@@ -12,7 +12,14 @@
     "MaxiCode",
     "DotCode",
     "1D barcode",
-    "2D barcode"
+    "2D barcode",
+    "code39",
+    "code128",
+    "EAN",
+    "UPC",
+    "GS1",
+    "Barcode SDK",
+    "Barcode Reader"
   ],
   "author": "yushulx",
   "license": "MIT",
