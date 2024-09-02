@@ -211,5 +211,5 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
     Open `https://< ip >:2018` to scan barcodes in web browsers.
 
 - [OpenCV](./examples/opencv/)
-    
+- [Node-RED](./examples/node-red/)
 
