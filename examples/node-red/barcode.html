@@ -1,0 +1,36 @@
+<script type="text/javascript">
+    RED.nodes.registerType('barcode',{
+        category: 'Dynamsoft',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            license: {value:""},
+            template: {value: ""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "function.png",
+        label: function() {
+            return this.name||"barcode";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="barcode">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Barcode Reader">
+    </div>
+    <div class="form-row">
+		<label for="node-input-license"><i class="icon-tag"></i> License</label>
+		<input type="text" id="node-input-license" placeholder="DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==">
+    </div>
+    <div class="form-row">
+		<label for="node-input-template"><i class="icon-tag"></i> Template</label>
+		<input type="text" id="node-input-template" placeholder="https://www.dynamsoft.com/barcode-reader/docs/core/parameters/structure-and-interfaces-of-parameters.html?ver=latest">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="barcode">
+    <p>A simple node that read barcodes from image files.</p>
+</script>
