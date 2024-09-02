@@ -213,3 +213,4 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
 - [OpenCV](./examples/opencv/)
 - [Node-RED](./examples/node-red/)
 
+    ![Node RED barcode](https://www.dynamsoft.com/codepool/img/2018/11/node-red-debug.PNG)
