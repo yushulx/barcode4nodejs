@@ -11,7 +11,7 @@ module.exports = function (RED) {
       if (msg.filename && msg.filename.indexOf('base64') > -1) {
         var fs = require('fs');
 
-        // Get a license key from https://www.dynamsoft.com/customer/license/trialLicense?product=dbr
+        // Get a license key from https://www.dynamsoft.com/customer/license/trialLicense/?product=dcv&package=cross-platform
         dbr.initLicense(node.license);
         fs.readFile(msg.filename, 'utf8', (err, data) => {
 

@@ -1,4 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -30,7 +31,7 @@
 
         function doReadBarcode() {
             var dbr = require('../../index.js');
-            // Get a license key from https://www.dynamsoft.com/customer/license/trialLicense?product=dbr
+            // Get a license key from https://www.dynamsoft.com/customer/license/trialLicense/?product=dcv&package=cross-platform
             dbr.initLicense("DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==");
             var fileName = document.getElementById('fileToUpload').files[0].path;
             dbr.decodeFileAsync(fileName, getSelectedBarcodeTypes(), function (err, msg) {
@@ -100,7 +101,8 @@
                             <span>PDF417</span>
                             <br />
                             <div class="imgWrapper">
-                                <img src="../web/assets/images/pdf417.gif" width="100" height="38" alt="Barcode Type PDF417" />
+                                <img src="../web/assets/images/pdf417.gif" width="100" height="38"
+                                    alt="Barcode Type PDF417" />
                             </div>
                         </label>
                     </li>

@@ -17,7 +17,7 @@ This Node-RED module integrates the Dynamsoft Barcode Reader SDK, enabling barco
 
     If the default port `1880` is occupied, modify it in `.node-red/settings.js` to use a different port, such as `18800`.
 
-- Obtain a [Dynamsoft Barcode Reader Trial License](https://www.dynamsoft.com/customer/license/trialLicense?product=dbr)
+- Obtain a [Dynamsoft Barcode Reader Trial License](https://www.dynamsoft.com/customer/license/trialLicense/?product=dcv&package=cross-platform)
     
 
 ## Getting Started

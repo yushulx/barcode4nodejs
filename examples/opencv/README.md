@@ -3,7 +3,7 @@ Build simple Node.js barcode reader applications for both desktop and web using 
 
 
 ## Prequisites
-- [Dynamsoft Barcode Reader Trial License](https://www.dynamsoft.com/customer/license/trialLicense/?product=dbr)
+- [Dynamsoft Barcode Reader Trial License](https://www.dynamsoft.com/customer/license/trialLicense/?product=dcv&package=cross-platform)
 - [Node.js](https://nodejs.org/en/download/)
 - [OpenCV](https://opencv.org/releases/)
     
