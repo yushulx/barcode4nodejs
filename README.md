@@ -60,7 +60,7 @@ The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Re
 
 ## API
 - `initLicense(license: string): void`
-- `createInstance(readerType: readerTypes): BarcodeReader`
+- `createInstance(): BarcodeReader`
 - `getVersion(): string`
 
 **Asynchronous Methods**

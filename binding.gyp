@@ -21,15 +21,26 @@
                     "cflags_cc": ["-std=c++11", "-DNAPI_CPP_EXCEPTIONS", "-fexceptions"],
                     "ldflags": ["-Wl,-rpath,'$$ORIGIN'"],
                     "libraries": [
-                        "-lDynamsoftBarcodeReader", "-L../platforms/linux/<(arch)"
+                        "-lDynamsoftCore", "-lDynamsoftLicense", "-lDynamsoftCaptureVisionRouter", "-lDynamsoftUtility", "-L../platforms/linux/<(arch)"
                     ],
                     "copies": [
                         {
                             "destination": "build/Release/",
                             "files": [
+                                "./platforms/linux/<(arch)/libDynamicImage.so",
+                                "./platforms/linux/<(arch)/libDynamicPdf.so",
+                                "./platforms/linux/<(arch)/libDynamicPdfCore.so",
                                 "./platforms/linux/<(arch)/libDynamsoftBarcodeReader.so",
-                                "./platforms/linux/<(arch)/libDynamsoftLicenseClient.so",
-                                "./platforms/linux/<(arch)/libDynamicPdf.so"
+                                "./platforms/linux/<(arch)/libDynamsoftCaptureVisionRouter.so",
+                                "./platforms/linux/<(arch)/libDynamsoftCodeParser.so",
+                                "./platforms/linux/<(arch)/libDynamsoftCodeParserDedicator.so",
+                                "./platforms/linux/<(arch)/libDynamsoftCore.so",
+                                "./platforms/linux/<(arch)/libDynamsoftDocumentNormalizer.so",
+                                "./platforms/linux/<(arch)/libDynamsoftImageProcessing.so",
+                                "./platforms/linux/<(arch)/libDynamsoftLabelRecognizer.so",
+                                "./platforms/linux/<(arch)/libDynamsoftLicense.so",
+                                "./platforms/linux/<(arch)/libDynamsoftNeuralNetwork.so",
+                                "./platforms/linux/<(arch)/libDynamsoftUtility.so",
                             ]
                         }
                     ]
@@ -37,19 +48,31 @@
                 ["OS=='win'", {
                     "defines": ["WINDOWS_DBR", "NAPI_CPP_EXCEPTIONS"],
                     "libraries": [
-                        "-l../platforms/windows/DBRx64.lib"
+                        "-l../platforms/windows/DynamsoftCorex64.lib", "-l../platforms/windows/DynamsoftLicensex64.lib", "-l../platforms/windows/DynamsoftCaptureVisionRouterx64.lib", "-l../platforms/windows/DynamsoftUtilityx64.lib"
                     ],
                     "copies": [
                         {
                             "destination": "build/Release/",
                             "files": [
+                                "./platforms/windows/DynamicImagex64.dll",
+                                "./platforms/windows/DynamicPdfCorex64.dll",
+                                "./platforms/windows/DynamicPdfx64.dll",
                                 "./platforms/windows/DynamsoftBarcodeReaderx64.dll",
-                                "./platforms/windows/DynamsoftLicenseClientx64.dll",
-                                "./platforms/windows/vcomp110.dll",
-                                "./platforms/windows/DynamicPdfx64.dll"
+                                "./platforms/windows/DynamsoftCaptureVisionRouterx64.dll",
+                                "./platforms/windows/DynamsoftCodeParserDedicatorx64.dll",
+                                "./platforms/windows/DynamsoftCodeParserx64.dll",
+                                "./platforms/windows/DynamsoftCorex64.dll",
+                                "./platforms/windows/DynamsoftDocumentNormalizerx64.dll",
+                                "./platforms/windows/DynamsoftImageProcessingx64.dll",
+                                "./platforms/windows/DynamsoftLabelRecognizerx64.dll",
+                                "./platforms/windows/DynamsoftLicensex64.dll",
+                                "./platforms/windows/DynamsoftNeuralNetworkx64.dll",
+                                "./platforms/windows/DynamsoftUtilityx64.dll",
+                                "./platforms/windows/vcomp140.dll"
                             ]
                         }
                     ]
+
                 }],
                 ["OS=='mac'", {
                     "defines": ["MAC_DBR"],
@@ -57,15 +80,26 @@
                     "cflags_cc": ["-std=c++11", "-DNAPI_CPP_EXCEPTIONS"],
                     "ldflags": ["-Wl,-rpath,@loader_path"],
                     "libraries": [
-                        "-lDynamsoftBarcodeReader", "-L../platforms/macos"
+                        "-lDynamsoftCore", "-lDynamsoftLicense", "-lDynamsoftCaptureVisionRouter", "-lDynamsoftUtility", "-L../platforms/macos"
                     ],
                     "copies": [
                         {
                             "destination": "build/Release/",
                             "files": [
+                                "./platforms/macos/libDynamicImagex64.dylib",
+                                "./platforms/macos/libDynamicPdf.dylib",
+                                "./platforms/macos/libDynamicPdfCore.dylib",
                                 "./platforms/macos/libDynamsoftBarcodeReader.dylib",
-                                "./platforms/macos/libDynamsoftLicenseClient.dylib",
-                                "./platforms/macos/libDynamicPdf.dylib"
+                                "./platforms/macos/libDynamsoftCaptureVisionRouter.dylib",
+                                "./platforms/macos/libDynamsoftCodeParser.dylib",
+                                "./platforms/macos/libDynamsoftCodeParserDedicator.dylib",
+                                "./platforms/macos/libDynamsoftCore.dylib",
+                                "./platforms/macos/libDynamsoftDocumentNormalizer.dylib",
+                                "./platforms/macos/libDynamsoftImageProcessing.dylib",
+                                "./platforms/macos/libDynamsoftLabelRecognizer.dylib",
+                                "./platforms/macos/libDynamsoftLicense.dylib",
+                                "./platforms/macos/libDynamsoftNeuralNetwork.dylib",
+                                "./platforms/macos/libDynamsoftUtility.dylib",
                             ]
                         }
                     ]
