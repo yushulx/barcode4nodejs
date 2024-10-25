@@ -5,8 +5,7 @@
 #include <napi.h>
 #include <string>
 #include <uv.h>
-#include "DynamsoftCommon.h"
-#include "DynamsoftBarcodeReader.h"
+#include "DynamsoftCaptureVisionRouter.h"
 
 typedef enum
 {
@@ -23,7 +22,7 @@ struct BarcodeWorker
     Napi::FunctionReference callback; // javascript callback
     int iFormat;                      // barcode types
     std::string filename;             // file name
-    TextResultArray *pResults;        // result pointer
+    void *pResults;                   // result pointer
     unsigned char *buffer;
     int size;              // file size
     int errorCode;         // detection error code
@@ -47,7 +46,6 @@ public:
 
 private:
     void *handler;
-    std::string instanceType;
 
     static Napi::FunctionReference constructor;
 
