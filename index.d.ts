@@ -51,7 +51,8 @@ export type BarcodeResult = {
     y4: number
     page: number
     time: number
-
+    angle: number
+    isMirrored: number
 }
 
 export interface BarcodeReader {
