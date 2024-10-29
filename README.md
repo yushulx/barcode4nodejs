@@ -151,9 +151,16 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
 3. Edit `src/dbr.cc` and `index.js`.
 4. Build the Node.js extension:
 
-    ```
+    ```bash
     node-gyp configure
     node-gyp build
+
+    # For macOS
+    install_name_tool -change @rpath/libDynamsoftCore.dylib @loader_path/libDynamsoftCore.dylib build/Release/dbr.node
+    install_name_tool -change @rpath/libDynamsoftLicense.dylib @loader_path/libDynamsoftLicense.dylib build/Release/dbr.node
+    install_name_tool -change @rpath/libDynamsoftCaptureVisionRouter.dylib @loader_path/libDynamsoftCaptureVisionRouter.dylib build/Release/dbr.node
+    install_name_tool -change @rpath/libDynamsoftUtility.dylib @loader_path/libDynamsoftUtility.dylib build/Release/dbr.node
+    install_name_tool -change @rpath/libDynamsoftImageProcessing.dylib @loader_path/libDynamsoftImageProcessing.dylib build/Release/libDynamsoftUtility.dylib
     ```
 
     **For Visual Studio 2019 Community**
