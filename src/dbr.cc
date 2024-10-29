@@ -1,4 +1,6 @@
 #include "dbr.h"
+#include "template.h"
+
 Napi::FunctionReference BarcodeReader::constructor;
 
 #define DBR_NO_MEMORY 0
@@ -21,20 +23,108 @@ int gettime()
 }
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
+
+std::string GetModulePath()
+{
+	char path[MAX_PATH];
+	HMODULE hModule = GetModuleHandle(NULL); // Get handle to the current module (DLL)
+	if (hModule != NULL)
+	{
+		GetModuleFileName(hModule, path, sizeof(path));
+		return std::string(path);
+	}
+	return "";
+}
+
+#elif defined(__linux__)
+#include <unistd.h>
+#include <limits.h>
+
+std::string GetModulePath()
+{
+	char path[PATH_MAX];
+	ssize_t count = readlink("/proc/self/exe", path, PATH_MAX); // Read the symlink to the executable
+	if (count != -1)
+	{
+		path[count] = '\0';
+		return std::string(path);
+	}
+	return "";
+}
+
+#elif defined(__APPLE__)
+#include <mach-o/dyld.h>
+
+std::string GetModulePath()
+{
+	char path[1024];
+	uint32_t size = sizeof(path);
+	if (_NSGetExecutablePath(path, &size) == 0)
+	{
+		return std::string(path);
+	}
+	return "";
+}
+
+#else
+#error "Unsupported platform"
+#endif
+
+void MyCapturedResultReceiver::OnDecodedBarcodesReceived(CDecodedBarcodesResult *pResult)
+{
+	pResult->Retain();
+	results.push_back(pResult);
+}
+
+MyImageSourceStateListener::MyImageSourceStateListener(CCaptureVisionRouter *router)
+{
+	m_router = router;
+}
+
+void MyImageSourceStateListener::OnImageSourceStateReceived(ImageSourceState state)
+{
+	if (state == ISS_EXHAUSTED)
+	{
+		m_router->StopCapturing();
+	}
+}
+
+std::string GetRelativeFilePath(const std::string &relativePath)
+{
+	std::string modulePath = GetModulePath();
+	if (modulePath.empty())
+	{
+		printf("Failed to get module path.\n");
+		return "";
+	}
+
+	// Get the directory of the module
+	size_t pos = modulePath.find_last_of("/\\");
+	std::string moduleDir = modulePath.substr(0, pos + 1); // Include the slash
+
+	// Construct the full path to the file
+	return moduleDir + relativePath;
+}
+
 void BarcodeReader::ProcessImage(BarcodeWorker *worker)
 {
+	CCaptureVisionRouter *handler = worker->handler;
+	CCapturedResult *result = NULL;
 	if (!worker->useTemplate)
 	{
-		PublicRuntimeSettings pSettings = {};
-		DBR_GetRuntimeSettings(worker->handler, &pSettings);
-		pSettings.barcodeFormatIds = worker->iFormat;
+		SimplifiedCaptureVisionSettings pSettings = {};
+		handler->GetSimplifiedSettings("", &pSettings);
+		pSettings.barcodeSettings.barcodeFormatIds = worker->iFormat <= 0 ? BF_ALL : worker->iFormat;
+
 		char szErrorMsgBuffer[256];
-		DBR_UpdateRuntimeSettings(worker->handler, &pSettings, szErrorMsgBuffer, 256);
+		handler->UpdateSettings("", &pSettings, szErrorMsgBuffer, 256);
 	}
 	else
 	{
-		char errorMessage[DEFAULT_MEMORY_SIZE];
-		int ret = DBR_InitRuntimeSettingsWithString(worker->handler, worker->templateContent.c_str(), CM_OVERWRITE, errorMessage, 256);
+		char errorMessage[256];
+		int ret = handler->InitSettings(worker->templateContent.c_str(), errorMessage, 256);
 		if (ret)
 		{
 			printf("Returned value: %d, error message: %s\n", ret, errorMessage);
@@ -48,7 +138,7 @@ void BarcodeReader::ProcessImage(BarcodeWorker *worker)
 	case FILE_STREAM:
 		if (worker->buffer)
 		{
-			ret = DBR_DecodeFileInMemory(worker->handler, worker->buffer, worker->size, "");
+			worker->fileFetcher->SetFile(worker->buffer, worker->size);
 		}
 		break;
 	case YUYV_BUFFER:
@@ -63,14 +153,16 @@ void BarcodeReader::ProcessImage(BarcodeWorker *worker)
 				data[i] = worker->buffer[index];
 				index += 2;
 			}
-			ret = DBR_DecodeBuffer(worker->handler, data, width, height, width, IPF_GRAYSCALED, "");
+			CImageData *imageData = new CImageData(size, data, width, height, width, IPF_GRAYSCALED);
+			worker->fileFetcher->SetFile(imageData);
+			delete imageData, imageData = NULL;
 			delete[] data, data = NULL;
 		}
 		break;
 	case BASE64:
 		if (worker->base64string != "")
 		{
-			ret = DBR_DecodeBase64String(worker->handler, worker->base64string.c_str(), "");
+			worker->fileFetcher->SetFile(worker->buffer, worker->size);
 		}
 		break;
 	case RGB_BUFFER:
@@ -90,54 +182,70 @@ void BarcodeReader::ProcessImage(BarcodeWorker *worker)
 			{
 				format = IPF_ARGB_8888;
 			}
-			ret = DBR_DecodeBuffer(worker->handler, worker->buffer, width, height, stride, format, "");
+			CImageData *imageData = new CImageData(stride * height, worker->buffer, width, height, stride, format);
+			worker->fileFetcher->SetFile(imageData);
+			delete imageData, imageData = NULL;
 		}
 		break;
 	default:
-		ret = DBR_DecodeFile(worker->handler, worker->filename.c_str(), "");
-		break;
+		worker->fileFetcher->SetFile(worker->filename.c_str());
+	}
+
+	char errorMsg[512] = {0};
+	int errorCode = worker->handler->StartCapturing("", true, errorMsg, 512);
+	if (errorCode != 0)
+	{
+		printf("StartCapturing: %s\n", errorMsg);
 	}
 
 	int endtime = gettime();
 	int elapsedTime = endtime - starttime;
-	if (ret)
-	{
-		printf("Detection error: %s\n", DBR_GetErrorString(ret));
-	}
-	DBR_GetAllTextResults(worker->handler, &worker->pResults);
+
+	worker->pResults = worker->capturedReceiver->results;
 	worker->errorCode = ret;
 	worker->elapsedTime = elapsedTime;
 }
 
 void BarcodeReader::WrapResults(BarcodeWorker *worker, Napi::Env env, Napi::Object &result)
 {
-	TextResultArray *pResults = worker->pResults;
-	if (pResults)
+	vector<CDecodedBarcodesResult *> pResults = worker->pResults;
+	Napi::Array barcodeResults = Napi::Array::New(env);
+	for (int j = 0; j < pResults.size(); j++)
 	{
-		int count = pResults->resultsCount;
-		Napi::Array barcodeResults = Napi::Array::New(env, count);
+		CDecodedBarcodesResult *barcodeResult = pResults[j];
 
-		for (int i = 0; i < count; i++)
+		if (barcodeResult)
 		{
-			Napi::Object res = Napi::Object::New(env);
-			res.Set("format", pResults->results[i]->barcodeFormatString);
-			res.Set("value", pResults->results[i]->barcodeText);
-			res.Set("x1", Napi::Number::New(env, pResults->results[i]->localizationResult->x1));
-			res.Set("y1", Napi::Number::New(env, pResults->results[i]->localizationResult->y1));
-			res.Set("x2", Napi::Number::New(env, pResults->results[i]->localizationResult->x2));
-			res.Set("y2", Napi::Number::New(env, pResults->results[i]->localizationResult->y2));
-			res.Set("x3", Napi::Number::New(env, pResults->results[i]->localizationResult->x3));
-			res.Set("y3", Napi::Number::New(env, pResults->results[i]->localizationResult->y3));
-			res.Set("x4", Napi::Number::New(env, pResults->results[i]->localizationResult->x4));
-			res.Set("y4", Napi::Number::New(env, pResults->results[i]->localizationResult->y4));
-			res.Set("page", Napi::Number::New(env, pResults->results[i]->localizationResult->pageNumber));
-			res.Set("time", Napi::Number::New(env, worker->elapsedTime));
-			barcodeResults.Set(i, res);
-		}
+			CFileImageTag *fileTag = (CFileImageTag *)barcodeResult->GetOriginalImageTag();
+			int count = barcodeResult->GetItemsCount();
 
-		result = barcodeResults;
-		DBR_FreeTextResults(&pResults);
+			for (int i = 0; i < count; i++)
+			{
+				const CBarcodeResultItem *barcodeResultItem = barcodeResult->GetItem(i);
+				CPoint *points = barcodeResultItem->GetLocation().points;
+
+				Napi::Object res = Napi::Object::New(env);
+				res.Set("format", barcodeResultItem->GetFormatString());
+				res.Set("value", barcodeResultItem->GetText());
+				res.Set("x1", Napi::Number::New(env, points[0][0]));
+				res.Set("y1", Napi::Number::New(env, points[0][1]));
+				res.Set("x2", Napi::Number::New(env, points[1][0]));
+				res.Set("y2", Napi::Number::New(env, points[1][1]));
+				res.Set("x3", Napi::Number::New(env, points[2][0]));
+				res.Set("y3", Napi::Number::New(env, points[2][1]));
+				res.Set("x4", Napi::Number::New(env, points[3][0]));
+				res.Set("y4", Napi::Number::New(env, points[3][1]));
+				res.Set("page", Napi::Number::New(env, fileTag->GetPageNumber()));
+				res.Set("time", Napi::Number::New(env, worker->elapsedTime));
+				barcodeResults.Set(i + j * count, res);
+			}
+
+			barcodeResult->Release();
+		}
 	}
+
+	result = barcodeResults;
+	worker->pResults.clear();
 }
 
 /*
@@ -154,8 +262,8 @@ Napi::Value InitLicense(const Napi::CallbackInfo &info)
 
 	std::string license = info[0].As<Napi::String>();
 	char errorMsgBuffer[512];
-	int ret = DBR_InitLicense(license.c_str(), errorMsgBuffer, 512);
-	printf("DBR_InitLicense: %s\n", errorMsgBuffer);
+	int ret = CLicenseManager::InitLicense(license.c_str(), errorMsgBuffer, 512);
+	printf("InitLicense: %s\n", errorMsgBuffer);
 	return Napi::Number::New(env, ret);
 }
 
@@ -172,7 +280,7 @@ Napi::Value SetLicenseCachePath(const Napi::CallbackInfo &info)
 	}
 
 	std::string cachePath = info[0].As<Napi::String>();
-	int ret = DBR_SetLicenseCachePath(cachePath.c_str());
+	int ret = CLicenseManager::SetLicenseCachePath(cachePath.c_str());
 	return Napi::Number::New(env, ret);
 }
 
@@ -185,6 +293,8 @@ Napi::Value BarcodeReader::DecodeFileAsync(const Napi::CallbackInfo &info)
 	BarcodeWorker *worker = new BarcodeWorker();
 	worker->request.data = worker;
 	worker->handler = handler;
+	worker->capturedReceiver = capturedReceiver;
+	worker->fileFetcher = fileFetcher;
 	worker->filename = info[0].As<Napi::String>();
 	worker->iFormat = info[1].As<Napi::Number>().Int32Value();
 	worker->callback = Napi::Persistent(info[2].As<Napi::Function>());
@@ -203,19 +313,19 @@ Napi::Value BarcodeReader::DecodeFileAsync(const Napi::CallbackInfo &info)
 
 	uv_queue_work(uv_default_loop(), &worker->request, [](uv_work_t *req)
 				  {
-        BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
-        ProcessImage(worker); }, [](uv_work_t *req, int status)
+	    BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
+	    ProcessImage(worker); }, [](uv_work_t *req, int status)
 				  {
-        BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
-        Napi::Env env = worker->callback.Env();
-        Napi::HandleScope scope(env);
+	    BarcodeWorker *worker = static_cast<BarcodeWorker *>(req->data);
+	    Napi::Env env = worker->callback.Env();
+	    Napi::HandleScope scope(env);
 
-        Napi::Object result = Napi::Object::New(env);
-        WrapResults(worker, env, result);
+	    Napi::Object result = Napi::Object::New(env);
+	    WrapResults(worker, env, result);
 
-        worker->callback.Call({Napi::Number::New(env, worker->errorCode), result});
-        worker->callback.Reset();
-        delete worker; });
+	    worker->callback.Call({Napi::Number::New(env, worker->errorCode), result});
+	    worker->callback.Reset();
+	    delete worker; });
 
 	return env.Undefined();
 }
@@ -225,6 +335,8 @@ Napi::Value BarcodeReader::DecodeFile(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	BarcodeWorker worker;
 	worker.handler = handler;
+	worker.capturedReceiver = capturedReceiver;
+	worker.fileFetcher = fileFetcher;
 	worker.filename = info[0].As<Napi::String>();
 	worker.iFormat = info[1].As<Napi::Number>().Int32Value();
 	worker.templateContent = info[2].As<Napi::String>();
@@ -257,6 +369,8 @@ Napi::Value BarcodeReader::DecodeFileStreamAsync(const Napi::CallbackInfo &info)
 	BarcodeWorker *worker = new BarcodeWorker();
 	worker->request.data = worker;
 	worker->handler = handler;
+	worker->capturedReceiver = capturedReceiver;
+	worker->fileFetcher = fileFetcher;
 	worker->buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
 	worker->size = info[1].As<Napi::Number>().Int32Value();
 	worker->iFormat = info[2].As<Napi::Number>().Int32Value();
@@ -298,6 +412,8 @@ Napi::Value BarcodeReader::DecodeFileStream(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	BarcodeWorker worker;
 	worker.handler = handler;
+	worker.capturedReceiver = capturedReceiver;
+	worker.fileFetcher = fileFetcher;
 	worker.buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
 	worker.size = info[1].As<Napi::Number>().Int32Value();
 	worker.iFormat = info[2].As<Napi::Number>().Int32Value();
@@ -331,6 +447,8 @@ Napi::Value BarcodeReader::DecodeBufferAsync(const Napi::CallbackInfo &info)
 	BarcodeWorker *worker = new BarcodeWorker();
 	worker->request.data = worker;
 	worker->handler = handler;
+	worker->capturedReceiver = capturedReceiver;
+	worker->fileFetcher = fileFetcher;
 	worker->buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
 	worker->width = info[1].As<Napi::Number>().Int32Value();
 	worker->height = info[2].As<Napi::Number>().Int32Value();
@@ -374,6 +492,8 @@ Napi::Value BarcodeReader::DecodeBuffer(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	BarcodeWorker worker;
 	worker.handler = handler;
+	worker.capturedReceiver = capturedReceiver;
+	worker.fileFetcher = fileFetcher;
 	worker.buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
 	worker.width = info[1].As<Napi::Number>().Int32Value();
 	worker.height = info[2].As<Napi::Number>().Int32Value();
@@ -409,6 +529,8 @@ Napi::Value BarcodeReader::DecodeYUYVAsync(const Napi::CallbackInfo &info)
 	BarcodeWorker *worker = new BarcodeWorker();
 	worker->request.data = worker;
 	worker->handler = handler;
+	worker->capturedReceiver = capturedReceiver;
+	worker->fileFetcher = fileFetcher;
 	worker->buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
 	worker->width = info[1].As<Napi::Number>().Int32Value();
 	worker->height = info[2].As<Napi::Number>().Int32Value();
@@ -451,6 +573,8 @@ Napi::Value BarcodeReader::DecodeYUYV(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	BarcodeWorker worker;
 	worker.handler = handler;
+	worker.capturedReceiver = capturedReceiver;
+	worker.fileFetcher = fileFetcher;
 	worker.buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
 	worker.width = info[1].As<Napi::Number>().Int32Value();
 	worker.height = info[2].As<Napi::Number>().Int32Value();
@@ -485,6 +609,8 @@ Napi::Value BarcodeReader::DecodeBase64Async(const Napi::CallbackInfo &info)
 	BarcodeWorker *worker = new BarcodeWorker();
 	worker->request.data = worker;
 	worker->handler = handler;
+	worker->capturedReceiver = capturedReceiver;
+	worker->fileFetcher = fileFetcher;
 	worker->base64string = info[0].As<Napi::String>();
 	worker->iFormat = info[1].As<Napi::Number>().Int32Value();
 	worker->callback = Napi::Persistent(info[2].As<Napi::Function>());
@@ -525,6 +651,8 @@ Napi::Value BarcodeReader::DecodeBase64(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	BarcodeWorker worker;
 	worker.handler = handler;
+	worker.capturedReceiver = capturedReceiver;
+	worker.fileFetcher = fileFetcher;
 	worker.base64string = info[0].As<Napi::String>();
 	worker.iFormat = info[1].As<Napi::Number>().Int32Value();
 	worker.templateContent = info[2].As<Napi::String>();
@@ -556,15 +684,26 @@ void BarcodeReader::DestroyInstance(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	if (handler)
 	{
-		if (instanceType == "concurrent")
-		{
-			DBR_RecycleInstance(handler);
-		}
-		else
-		{
-			DBR_DestroyInstance(handler);
-		}
+		delete handler;
 		handler = NULL;
+	}
+
+	if (listener)
+	{
+		delete listener;
+		listener = NULL;
+	}
+
+	if (fileFetcher)
+	{
+		delete fileFetcher;
+		fileFetcher = NULL;
+	}
+
+	if (capturedReceiver)
+	{
+		delete capturedReceiver;
+		capturedReceiver = NULL;
 	}
 }
 
@@ -576,44 +715,53 @@ void BarcodeReader::DestroyInstance(const Napi::CallbackInfo &info)
 Napi::String GetVersionNumber(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
-	return Napi::String::New(env, DBR_GetVersion());
+	return Napi::String::New(env, CCaptureVisionRouterModule::GetVersion());
 }
 
 BarcodeReader::BarcodeReader(const Napi::CallbackInfo &info) : Napi::ObjectWrap<BarcodeReader>(info)
 {
 	Napi::Env env = info.Env();
-	if (info.Length() >= 1 && info[0].IsString())
+	handler = new CCaptureVisionRouter;
+	char errorMsgBuffer[256];
+	int ret = handler->InitSettings(jsonString.c_str(), errorMsgBuffer, 256);
+	if (ret)
 	{
-		instanceType = info[0].As<Napi::String>();
-		if (instanceType == "concurrent")
-		{
-			handler = DBR_GetInstance();
-		}
-		else
-		{
-			handler = DBR_CreateInstance();
-		}
+		printf("InitSettings: %s\n", errorMsgBuffer);
 	}
-	else
-	{
-		handler = DBR_CreateInstance();
-		instanceType = "default";
-	}
+
+	listener = new MyImageSourceStateListener(handler);
+	fileFetcher = new CFileFetcher();
+	handler->SetInput(fileFetcher);
+
+	capturedReceiver = new MyCapturedResultReceiver;
+	handler->AddResultReceiver(capturedReceiver);
+	handler->AddImageSourceStateListener(listener);
 }
 
 BarcodeReader::~BarcodeReader()
 {
 	if (handler)
 	{
-		if (instanceType == "concurrent")
-		{
-			DBR_RecycleInstance(handler);
-		}
-		else
-		{
-			DBR_DestroyInstance(handler);
-		}
+		delete handler;
 		handler = NULL;
+	}
+
+	if (listener)
+	{
+		delete listener;
+		listener = NULL;
+	}
+
+	if (fileFetcher)
+	{
+		delete fileFetcher;
+		fileFetcher = NULL;
+	}
+
+	if (capturedReceiver)
+	{
+		delete capturedReceiver;
+		capturedReceiver = NULL;
 	}
 }
 

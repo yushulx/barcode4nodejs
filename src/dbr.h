@@ -5,8 +5,25 @@
 #include <napi.h>
 #include <string>
 #include <uv.h>
-#include "DynamsoftCommon.h"
-#include "DynamsoftBarcodeReader.h"
+#include <vector>
+#include "DynamsoftCaptureVisionRouter.h"
+#include "DynamsoftUtility.h"
+
+using namespace std;
+using namespace dynamsoft::license;
+using namespace dynamsoft::cvr;
+using namespace dynamsoft::dbr;
+using namespace dynamsoft::utility;
+using namespace dynamsoft::basic_structures;
+
+class MyCapturedResultReceiver : public CCapturedResultReceiver
+{
+public:
+    vector<CDecodedBarcodesResult *> results;
+
+public:
+    virtual void OnDecodedBarcodesReceived(CDecodedBarcodesResult *pResult) override;
+};
 
 typedef enum
 {
@@ -19,11 +36,11 @@ typedef enum
 
 struct BarcodeWorker
 {
-    uv_work_t request;                // libuv
-    Napi::FunctionReference callback; // javascript callback
-    int iFormat;                      // barcode types
-    std::string filename;             // file name
-    TextResultArray *pResults;        // result pointer
+    uv_work_t request;                         // libuv
+    Napi::FunctionReference callback;          // javascript callback
+    int iFormat;                               // barcode types
+    std::string filename;                      // file name
+    vector<CDecodedBarcodesResult *> pResults; // result pointer
     unsigned char *buffer;
     int size;              // file size
     int errorCode;         // detection error code
@@ -35,7 +52,20 @@ struct BarcodeWorker
     std::string base64string; // image as base64 string
     std::string templateContent;
     int elapsedTime;
-    void *handler;
+    CCaptureVisionRouter *handler;
+    MyCapturedResultReceiver *capturedReceiver;
+    CFileFetcher *fileFetcher;
+};
+
+class MyImageSourceStateListener : public CImageSourceStateListener
+{
+private:
+    CCaptureVisionRouter *m_router;
+    BarcodeWorker *m_worker;
+
+public:
+    MyImageSourceStateListener(CCaptureVisionRouter *router);
+    virtual void OnImageSourceStateReceived(ImageSourceState state) override;
 };
 
 class BarcodeReader : public Napi::ObjectWrap<BarcodeReader>
@@ -46,8 +76,10 @@ public:
     ~BarcodeReader();
 
 private:
-    void *handler;
-    std::string instanceType;
+    CCaptureVisionRouter *handler;
+    CFileFetcher *fileFetcher;
+    CImageSourceStateListener *listener;
+    MyCapturedResultReceiver *capturedReceiver;
 
     static Napi::FunctionReference constructor;
 

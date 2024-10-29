@@ -1,5 +1,5 @@
 export enum formats {
-    ALL = 0xFE3FFFFF,
+    ALL = 0xFFFFFFFEFFFFFFFF,
     ONED = 0x003007FF,
     GS1_DATABAR = 0x0003F800,
     CODE_39 = 0x1,
@@ -21,6 +21,7 @@ export enum formats {
     GS1_DATABAR_EXPANDED_STACKED = 0x10000,
     GS1_DATABAR_LIMITED = 0x20000,
     PATCHCODE = 0x00040000,
+    CODE_32 = 0x1000000,
     PDF417 = 0x02000000,
     QR_CODE = 0x04000000,
     DATAMATRIX = 0x08000000,
@@ -30,12 +31,22 @@ export enum formats {
     MICRO_PDF417 = 0x00080000,
     GS1_COMPOSITE = 0x80000000,
     MSI_CODE = 0x100000,
-    CODE_11 = 0x200000
-}
-
-export enum readerTypes {
-    DEFAULT = "",
-    CONCURRENT = "concurrent",
+    CODE_11 = 0x200000,
+    TWO_DIGIT_ADD_ON = 0x400000,
+    TWO_FIVE_DIGIT_ADD_ON = 0x800000,
+    MATRIX_25 = 0x1000000000,
+    POSTALCODE = 0x3F0000000000000,
+    NONSTANDARD_BARCODE = 0x100000000,
+    USPSINTELLIGENTMAIL = 0x10000000000000,
+    POSTNET = 0x20000000000000,
+    PLANET = 0x40000000000000,
+    AUSTRALIANPOST = 0x80000000000000,
+    RM4SCC = 0x100000000000000,
+    KIX = 0x200000000000000,
+    DOTCODE = 0x200000000,
+    PHARMACODE_ONE_TRACK = 0x400000000,
+    PHARMACODE_TWO_TRACK = 0x800000000,
+    PHARMACODE = 0xC00000000
 }
 
 export type BarcodeResult = {
@@ -83,7 +94,7 @@ export function getVersion(): string;
 export function initLicense(license: string): void;
 export function setLicenseCachePath(path: string): void;
 export function destroyInstance(): void;
-export function createInstance(readerType: readerTypes): BarcodeReader;
+export function createInstance(): BarcodeReader;
 
 // Asynchronous API
 export function decodeFileAsync(filePath: string, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void;
