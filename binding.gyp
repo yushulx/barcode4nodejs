@@ -32,14 +32,9 @@
                                 "./platforms/linux/<(arch)/libDynamicPdfCore.so",
                                 "./platforms/linux/<(arch)/libDynamsoftBarcodeReader.so",
                                 "./platforms/linux/<(arch)/libDynamsoftCaptureVisionRouter.so",
-                                "./platforms/linux/<(arch)/libDynamsoftCodeParser.so",
-                                "./platforms/linux/<(arch)/libDynamsoftCodeParserDedicator.so",
                                 "./platforms/linux/<(arch)/libDynamsoftCore.so",
-                                "./platforms/linux/<(arch)/libDynamsoftDocumentNormalizer.so",
                                 "./platforms/linux/<(arch)/libDynamsoftImageProcessing.so",
-                                "./platforms/linux/<(arch)/libDynamsoftLabelRecognizer.so",
                                 "./platforms/linux/<(arch)/libDynamsoftLicense.so",
-                                "./platforms/linux/<(arch)/libDynamsoftNeuralNetwork.so",
                                 "./platforms/linux/<(arch)/libDynamsoftUtility.so",
                             ]
                         }
@@ -59,14 +54,9 @@
                                 "./platforms/windows/DynamicPdfx64.dll",
                                 "./platforms/windows/DynamsoftBarcodeReaderx64.dll",
                                 "./platforms/windows/DynamsoftCaptureVisionRouterx64.dll",
-                                "./platforms/windows/DynamsoftCodeParserDedicatorx64.dll",
-                                "./platforms/windows/DynamsoftCodeParserx64.dll",
                                 "./platforms/windows/DynamsoftCorex64.dll",
-                                "./platforms/windows/DynamsoftDocumentNormalizerx64.dll",
                                 "./platforms/windows/DynamsoftImageProcessingx64.dll",
-                                "./platforms/windows/DynamsoftLabelRecognizerx64.dll",
                                 "./platforms/windows/DynamsoftLicensex64.dll",
-                                "./platforms/windows/DynamsoftNeuralNetworkx64.dll",
                                 "./platforms/windows/DynamsoftUtilityx64.dll",
                                 "./platforms/windows/vcomp140.dll"
                             ]
@@ -91,14 +81,9 @@
                                 "./platforms/macos/libDynamicPdfCore.dylib",
                                 "./platforms/macos/libDynamsoftBarcodeReader.dylib",
                                 "./platforms/macos/libDynamsoftCaptureVisionRouter.dylib",
-                                "./platforms/macos/libDynamsoftCodeParser.dylib",
-                                "./platforms/macos/libDynamsoftCodeParserDedicator.dylib",
                                 "./platforms/macos/libDynamsoftCore.dylib",
-                                "./platforms/macos/libDynamsoftDocumentNormalizer.dylib",
                                 "./platforms/macos/libDynamsoftImageProcessing.dylib",
-                                "./platforms/macos/libDynamsoftLabelRecognizer.dylib",
                                 "./platforms/macos/libDynamsoftLicense.dylib",
-                                "./platforms/macos/libDynamsoftNeuralNetwork.dylib",
                                 "./platforms/macos/libDynamsoftUtility.dylib",
                             ]
                         }
