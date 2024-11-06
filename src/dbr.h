@@ -36,11 +36,11 @@ typedef enum
 
 struct BarcodeWorker
 {
-    uv_work_t request;                         // libuv
-    Napi::FunctionReference callback;          // javascript callback
-    int iFormat;                               // barcode types
-    std::string filename;                      // file name
-    vector<CDecodedBarcodesResult *> pResults; // result pointer
+    uv_work_t request;                          // libuv
+    Napi::FunctionReference callback;           // javascript callback
+    int iFormat;                                // barcode types
+    std::string filename;                       // file name
+    vector<CDecodedBarcodesResult *> *pResults; // result pointer
     unsigned char *buffer;
     int size;              // file size
     int errorCode;         // detection error code

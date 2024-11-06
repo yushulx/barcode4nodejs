@@ -201,18 +201,18 @@ void BarcodeReader::ProcessImage(BarcodeWorker *worker)
 	int endtime = gettime();
 	int elapsedTime = endtime - starttime;
 
-	worker->pResults = worker->capturedReceiver->results;
+	worker->pResults = &worker->capturedReceiver->results;
 	worker->errorCode = ret;
 	worker->elapsedTime = elapsedTime;
 }
 
 void BarcodeReader::WrapResults(BarcodeWorker *worker, Napi::Env env, Napi::Object &result)
 {
-	vector<CDecodedBarcodesResult *> pResults = worker->pResults;
+	vector<CDecodedBarcodesResult *> *pResults = worker->pResults;
 	Napi::Array barcodeResults = Napi::Array::New(env);
-	for (int j = 0; j < pResults.size(); j++)
+	for (int j = 0; j < pResults->size(); j++)
 	{
-		CDecodedBarcodesResult *barcodeResult = pResults[j];
+		CDecodedBarcodesResult *barcodeResult = (*pResults)[j];
 
 		if (barcodeResult)
 		{
@@ -247,7 +247,7 @@ void BarcodeReader::WrapResults(BarcodeWorker *worker, Napi::Env env, Napi::Obje
 	}
 
 	result = barcodeResults;
-	worker->pResults.clear();
+	worker->pResults->clear();
 }
 
 /*
