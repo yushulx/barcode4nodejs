@@ -73,36 +73,13 @@ The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Re
 - `decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void`
 - `decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): Promise<BarcodeResult[]>`
 
-## Template Usage
-1. Visit the [barcode reader online demo](https://demo.dynamsoft.com/barcode-reader-v9/). 
-2. Customize parameters in advanced settings and then download the template.
-
-For example:
-
-```js
-let params = {
-  "ImageParameter": {
-    "Name": "Custom_143301_827",
-    "BarcodeFormatIds": [
-      "BF_ALL"
-    ],
-    "DeblurLevel": 9,
-    "ExpectedBarcodesCount": 100,
-    "ScaleDownThreshold": 1200000,
-    "Timeout": 100000
-  },
-  "Version": "3.0"
-};
-template = JSON.stringify(params);
-```
-
 ## Quick Usage
 Replace `LICENSE-KEY` with your own license key.
 
 ```js
 const dbr = require('barcode4nodejs');
 dbr.initLicense("LICENSE-KEY")
-dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.formats.DataMatrix | dbr.formats.Aztec, function(err, msg){
+dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.ALL, function(err, msg){
   console.log(msg);
   for (index in msg) {
     result = msg[index];
@@ -124,7 +101,7 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | d
 // Or
 (async function () {
   try {
-    var result = await dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.formats.DataMatrix | dbr.formats.Aztec, "");
+    var result = await dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.ALL, "");
     console.log(result);
   } catch (error) {
     console.log(error);

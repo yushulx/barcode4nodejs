@@ -1,7 +1,7 @@
 const dbr = require('barcode4nodejs');
 // Get a license key from https://www.dynamsoft.com/customer/license/trialLicense/?product=dcv&package=cross-platform
 dbr.initLicense("DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==");
-dbr.decodeFileAsync("test.tif", dbr.formats.OneD | dbr.formats.PDF417 | dbr.formats.QRCode | dbr.formats.DataMatrix | dbr.formats.Aztec, function (err, msg) {
+dbr.decodeFileAsync("test.tif", dbr.formats.ALL, function (err, msg) {
   console.log(msg);
   for (index in msg) {
     result = msg[index];
