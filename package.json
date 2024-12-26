@@ -1,6 +1,6 @@
 {
   "name": "barcode4nodejs",
-  "version": "10.0.4",
+  "version": "10.0.5",
   "description": "Node.js bindings to Dynamsoft Barcode Reader C/C++ SDK.",
   "keywords": [
     "barcode",

@@ -332,35 +332,36 @@ Napi::Value BarcodeReader::DecodeFileAsync(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
-Napi::Value BarcodeReader::DecodeFile(const Napi::CallbackInfo &info)
-{
-	Napi::Env env = info.Env();
-	BarcodeWorker worker;
-	worker.handler = handler;
-	worker.capturedReceiver = capturedReceiver;
-	worker.fileFetcher = fileFetcher;
-	worker.filename = info[0].As<Napi::String>();
-	worker.iFormat = info[1].As<Napi::Number>().Int32Value();
-	worker.templateContent = info[2].As<Napi::String>();
+// Napi::Value BarcodeReader::DecodeFile(const Napi::CallbackInfo &info)
+// {
+// 	Napi::Env env = info.Env();
+// 	BarcodeWorker worker;
+// 	worker.handler = handler;
+// 	worker.capturedReceiver = capturedReceiver;
+// 	worker.fileFetcher = fileFetcher;
+// 	worker.filename = info[0].As<Napi::String>();
+// 	worker.iFormat = info[1].As<Napi::Number>().Int32Value();
+// 	worker.callback = Napi::Persistent(info[2].As<Napi::Function>());
+// 	worker.templateContent = info[3].As<Napi::String>();
 
-	if (worker.templateContent == "undefined" || worker.templateContent.empty())
-	{
-		worker.useTemplate = false;
-	}
-	else
-	{
-		worker.useTemplate = true;
-	}
+// 	if (worker.templateContent == "undefined" || worker.templateContent.empty())
+// 	{
+// 		worker.useTemplate = false;
+// 	}
+// 	else
+// 	{
+// 		worker.useTemplate = true;
+// 	}
 
-	worker.bufferType = NO_BUFFER;
+// 	worker.bufferType = NO_BUFFER;
 
-	ProcessImage(&worker);
+// 	ProcessImage(&worker);
 
-	Napi::Object result = Napi::Object::New(env);
-	WrapResults(&worker, env, result);
+// 	Napi::Object result = Napi::Object::New(env);
+// 	WrapResults(&worker, env, result);
 
-	return result;
-}
+// 	return result;
+// }
 
 /*
  *	decodeFileStreamAsync(fileStream, fileSize, barcodeTypes, callback, template)
@@ -409,36 +410,36 @@ Napi::Value BarcodeReader::DecodeFileStreamAsync(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
-Napi::Value BarcodeReader::DecodeFileStream(const Napi::CallbackInfo &info)
-{
-	Napi::Env env = info.Env();
-	BarcodeWorker worker;
-	worker.handler = handler;
-	worker.capturedReceiver = capturedReceiver;
-	worker.fileFetcher = fileFetcher;
-	worker.buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
-	worker.size = info[1].As<Napi::Number>().Int32Value();
-	worker.iFormat = info[2].As<Napi::Number>().Int32Value();
-	worker.templateContent = info[3].As<Napi::String>();
+// Napi::Value BarcodeReader::DecodeFileStream(const Napi::CallbackInfo &info)
+// {
+// 	Napi::Env env = info.Env();
+// 	BarcodeWorker worker;
+// 	worker.handler = handler;
+// 	worker.capturedReceiver = capturedReceiver;
+// 	worker.fileFetcher = fileFetcher;
+// 	worker.buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
+// 	worker.size = info[1].As<Napi::Number>().Int32Value();
+// 	worker.iFormat = info[2].As<Napi::Number>().Int32Value();
+// 	worker.templateContent = info[3].As<Napi::String>();
 
-	if (worker.templateContent == "undefined" || worker.templateContent.empty())
-	{
-		worker.useTemplate = false;
-	}
-	else
-	{
-		worker.useTemplate = true;
-	}
+// 	if (worker.templateContent == "undefined" || worker.templateContent.empty())
+// 	{
+// 		worker.useTemplate = false;
+// 	}
+// 	else
+// 	{
+// 		worker.useTemplate = true;
+// 	}
 
-	worker.bufferType = FILE_STREAM;
+// 	worker.bufferType = FILE_STREAM;
 
-	ProcessImage(&worker);
+// 	ProcessImage(&worker);
 
-	Napi::Object result = Napi::Object::New(env);
-	WrapResults(&worker, env, result);
+// 	Napi::Object result = Napi::Object::New(env);
+// 	WrapResults(&worker, env, result);
 
-	return result;
-}
+// 	return result;
+// }
 
 /*
  *	decodeBuffer(buffer, width, height, stride, barcodeTypes, callback, template)
@@ -489,38 +490,38 @@ Napi::Value BarcodeReader::DecodeBufferAsync(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
-Napi::Value BarcodeReader::DecodeBuffer(const Napi::CallbackInfo &info)
-{
-	Napi::Env env = info.Env();
-	BarcodeWorker worker;
-	worker.handler = handler;
-	worker.capturedReceiver = capturedReceiver;
-	worker.fileFetcher = fileFetcher;
-	worker.buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
-	worker.width = info[1].As<Napi::Number>().Int32Value();
-	worker.height = info[2].As<Napi::Number>().Int32Value();
-	worker.stride = info[3].As<Napi::Number>().Int32Value();
-	worker.iFormat = info[4].As<Napi::Number>().Int32Value();
-	worker.templateContent = info[5].As<Napi::String>();
+// Napi::Value BarcodeReader::DecodeBuffer(const Napi::CallbackInfo &info)
+// {
+// 	Napi::Env env = info.Env();
+// 	BarcodeWorker worker;
+// 	worker.handler = handler;
+// 	worker.capturedReceiver = capturedReceiver;
+// 	worker.fileFetcher = fileFetcher;
+// 	worker.buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
+// 	worker.width = info[1].As<Napi::Number>().Int32Value();
+// 	worker.height = info[2].As<Napi::Number>().Int32Value();
+// 	worker.stride = info[3].As<Napi::Number>().Int32Value();
+// 	worker.iFormat = info[4].As<Napi::Number>().Int32Value();
+// 	worker.templateContent = info[5].As<Napi::String>();
 
-	if (worker.templateContent == "undefined" || worker.templateContent.empty())
-	{
-		worker.useTemplate = false;
-	}
-	else
-	{
-		worker.useTemplate = true;
-	}
+// 	if (worker.templateContent == "undefined" || worker.templateContent.empty())
+// 	{
+// 		worker.useTemplate = false;
+// 	}
+// 	else
+// 	{
+// 		worker.useTemplate = true;
+// 	}
 
-	worker.bufferType = RGB_BUFFER;
+// 	worker.bufferType = RGB_BUFFER;
 
-	ProcessImage(&worker);
+// 	ProcessImage(&worker);
 
-	Napi::Object result = Napi::Object::New(env);
-	WrapResults(&worker, env, result);
+// 	Napi::Object result = Napi::Object::New(env);
+// 	WrapResults(&worker, env, result);
 
-	return result;
-}
+// 	return result;
+// }
 
 /*
  *	decodeYUYVAsync(buffer, width, height, barcodeTypes, callback, template)
@@ -570,37 +571,37 @@ Napi::Value BarcodeReader::DecodeYUYVAsync(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
-Napi::Value BarcodeReader::DecodeYUYV(const Napi::CallbackInfo &info)
-{
-	Napi::Env env = info.Env();
-	BarcodeWorker worker;
-	worker.handler = handler;
-	worker.capturedReceiver = capturedReceiver;
-	worker.fileFetcher = fileFetcher;
-	worker.buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
-	worker.width = info[1].As<Napi::Number>().Int32Value();
-	worker.height = info[2].As<Napi::Number>().Int32Value();
-	worker.iFormat = info[3].As<Napi::Number>().Int32Value();
-	worker.templateContent = info[4].As<Napi::String>();
+// Napi::Value BarcodeReader::DecodeYUYV(const Napi::CallbackInfo &info)
+// {
+// 	Napi::Env env = info.Env();
+// 	BarcodeWorker worker;
+// 	worker.handler = handler;
+// 	worker.capturedReceiver = capturedReceiver;
+// 	worker.fileFetcher = fileFetcher;
+// 	worker.buffer = (unsigned char *)info[0].As<Napi::Buffer<unsigned char>>().Data();
+// 	worker.width = info[1].As<Napi::Number>().Int32Value();
+// 	worker.height = info[2].As<Napi::Number>().Int32Value();
+// 	worker.iFormat = info[3].As<Napi::Number>().Int32Value();
+// 	worker.templateContent = info[4].As<Napi::String>();
 
-	if (worker.templateContent == "undefined" || worker.templateContent.empty())
-	{
-		worker.useTemplate = false;
-	}
-	else
-	{
-		worker.useTemplate = true;
-	}
+// 	if (worker.templateContent == "undefined" || worker.templateContent.empty())
+// 	{
+// 		worker.useTemplate = false;
+// 	}
+// 	else
+// 	{
+// 		worker.useTemplate = true;
+// 	}
 
-	worker.bufferType = YUYV_BUFFER;
+// 	worker.bufferType = YUYV_BUFFER;
 
-	ProcessImage(&worker);
+// 	ProcessImage(&worker);
 
-	Napi::Object result = Napi::Object::New(env);
-	WrapResults(&worker, env, result);
+// 	Napi::Object result = Napi::Object::New(env);
+// 	WrapResults(&worker, env, result);
 
-	return result;
-}
+// 	return result;
+// }
 
 /*
  *	decodeBase64Async(base64, barcodeTypes, callback, template)
@@ -648,35 +649,36 @@ Napi::Value BarcodeReader::DecodeBase64Async(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
-Napi::Value BarcodeReader::DecodeBase64(const Napi::CallbackInfo &info)
-{
-	Napi::Env env = info.Env();
-	BarcodeWorker worker;
-	worker.handler = handler;
-	worker.capturedReceiver = capturedReceiver;
-	worker.fileFetcher = fileFetcher;
-	worker.base64string = info[0].As<Napi::String>();
-	worker.iFormat = info[1].As<Napi::Number>().Int32Value();
-	worker.templateContent = info[2].As<Napi::String>();
+// Napi::Value BarcodeReader::DecodeBase64(const Napi::CallbackInfo &info)
+// {
+// 	Napi::Env env = info.Env();
+// 	BarcodeWorker worker;
+// 	worker.handler = handler;
+// 	worker.capturedReceiver = capturedReceiver;
+// 	worker.fileFetcher = fileFetcher;
+// 	worker.base64string = info[0].As<Napi::String>();
+// 	worker.iFormat = info[1].As<Napi::Number>().Int32Value();
+// 	worker.callback = Napi::Persistent(info[2].As<Napi::Function>());
+// 	worker.templateContent = info[3].As<Napi::String>();
 
-	if (worker.templateContent == "undefined" || worker.templateContent.empty())
-	{
-		worker.useTemplate = false;
-	}
-	else
-	{
-		worker.useTemplate = true;
-	}
+// 	if (worker.templateContent == "undefined" || worker.templateContent.empty())
+// 	{
+// 		worker.useTemplate = false;
+// 	}
+// 	else
+// 	{
+// 		worker.useTemplate = true;
+// 	}
 
-	worker.bufferType = BASE64;
+// 	worker.bufferType = BASE64;
 
-	ProcessImage(&worker);
+// 	ProcessImage(&worker);
 
-	Napi::Object result = Napi::Object::New(env);
-	WrapResults(&worker, env, result);
+// 	Napi::Object result = Napi::Object::New(env);
+// 	WrapResults(&worker, env, result);
 
-	return result;
-}
+// 	return result;
+// }
 
 /*
  *	destroyInstance()
@@ -769,7 +771,9 @@ BarcodeReader::~BarcodeReader()
 
 Napi::Object BarcodeReader::Init(Napi::Env env, Napi::Object exports)
 {
-	Napi::Function func = DefineClass(env, "BarcodeReader", {InstanceMethod("decodeYUYVAsync", &BarcodeReader::DecodeYUYVAsync), InstanceMethod("decodeFileStreamAsync", &BarcodeReader::DecodeFileStreamAsync), InstanceMethod("decodeFileAsync", &BarcodeReader::DecodeFileAsync), InstanceMethod("decodeBase64Async", &BarcodeReader::DecodeBase64Async), InstanceMethod("decodeBufferAsync", &BarcodeReader::DecodeBufferAsync), InstanceMethod("destroyInstance", &BarcodeReader::DestroyInstance), InstanceMethod("decodeYUYV", &BarcodeReader::DecodeYUYV), InstanceMethod("decodeFileStream", &BarcodeReader::DecodeFileStream), InstanceMethod("decodeFile", &BarcodeReader::DecodeFile), InstanceMethod("decodeBase64", &BarcodeReader::DecodeBase64), InstanceMethod("decodeBuffer", &BarcodeReader::DecodeBuffer)});
+	// Napi::Function func = DefineClass(env, "BarcodeReader", {InstanceMethod("decodeYUYVAsync", &BarcodeReader::DecodeYUYVAsync), InstanceMethod("decodeFileStreamAsync", &BarcodeReader::DecodeFileStreamAsync), InstanceMethod("decodeFileAsync", &BarcodeReader::DecodeFileAsync), InstanceMethod("decodeBase64Async", &BarcodeReader::DecodeBase64Async), InstanceMethod("decodeBufferAsync", &BarcodeReader::DecodeBufferAsync), InstanceMethod("destroyInstance", &BarcodeReader::DestroyInstance), InstanceMethod("decodeYUYV", &BarcodeReader::DecodeYUYV), InstanceMethod("decodeFileStream", &BarcodeReader::DecodeFileStream), InstanceMethod("decodeFile", &BarcodeReader::DecodeFile), InstanceMethod("decodeBase64", &BarcodeReader::DecodeBase64), InstanceMethod("decodeBuffer", &BarcodeReader::DecodeBuffer)});
+
+	Napi::Function func = DefineClass(env, "BarcodeReader", {InstanceMethod("decodeYUYVAsync", &BarcodeReader::DecodeYUYVAsync), InstanceMethod("decodeFileStreamAsync", &BarcodeReader::DecodeFileStreamAsync), InstanceMethod("decodeFileAsync", &BarcodeReader::DecodeFileAsync), InstanceMethod("decodeBase64Async", &BarcodeReader::DecodeBase64Async), InstanceMethod("decodeBufferAsync", &BarcodeReader::DecodeBufferAsync), InstanceMethod("destroyInstance", &BarcodeReader::DestroyInstance)});
 
 	constructor = Napi::Persistent(func);
 	constructor.SuppressDestruct();

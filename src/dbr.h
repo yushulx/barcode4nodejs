@@ -90,11 +90,11 @@ private:
     Napi::Value DecodeBufferAsync(const Napi::CallbackInfo &info);
     void DestroyInstance(const Napi::CallbackInfo &info);
 
-    Napi::Value DecodeYUYV(const Napi::CallbackInfo &info);
-    Napi::Value DecodeFileStream(const Napi::CallbackInfo &info);
-    Napi::Value DecodeFile(const Napi::CallbackInfo &info);
-    Napi::Value DecodeBase64(const Napi::CallbackInfo &info);
-    Napi::Value DecodeBuffer(const Napi::CallbackInfo &info);
+    // Napi::Value DecodeYUYV(const Napi::CallbackInfo &info);
+    // Napi::Value DecodeFileStream(const Napi::CallbackInfo &info);
+    // Napi::Value DecodeFile(const Napi::CallbackInfo &info);
+    // Napi::Value DecodeBase64(const Napi::CallbackInfo &info);
+    // Napi::Value DecodeBuffer(const Napi::CallbackInfo &info);
 
     static void ProcessImage(BarcodeWorker *worker);
     static void WrapResults(BarcodeWorker *worker, Napi::Env env, Napi::Object &result);

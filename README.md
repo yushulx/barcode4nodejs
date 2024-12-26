@@ -73,13 +73,6 @@ The Node.js barcode QR code SDK is implemented by wrapping [Dynamsoft Barcode Re
 - `decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, callback?: (err: Error | null, result?: BarcodeResult[]) => void, template?: string): void`
 - `decodeBufferAsync(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): Promise<BarcodeResult[]>`
 
-**Synchronous Methods**
-- `decodeFile(filePath: string, format: formats, template?: string): BarcodeResult[]`
-- `decodeFileStream(stream: any, length: number, format: formats, template?: string): BarcodeResult[]`
-- `decodeBase64(base64String: string, format: formats, template?: string): BarcodeResult[]`
-- `decodeYUYV(data: any, width: number, height: number, format: formats, template?: string): BarcodeResult[]`
-- `decodeBuffer(buffer: any, width: number, height: number, stride: number, format: formats, template?: string): BarcodeResult[]`
-
 ## Template Usage
 1. Visit the [barcode reader online demo](https://demo.dynamsoft.com/barcode-reader-v9/). 
 2. Customize parameters in advanced settings and then download the template.
