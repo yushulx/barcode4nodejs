@@ -185,7 +185,7 @@ dbr.decodeFileAsync("YOUR IMAGE FILE", dbr.formats.ALL, function(err, msg){
     
     Open `https://< ip >:2018` to scan barcodes in web browsers.
 
-- [OpenCV](./examples/opencv/)
+- [Litecamera](./examples/litecamera/)
 - [Node-RED](./examples/node-red/)
 
     ![Node RED barcode](https://www.dynamsoft.com/codepool/img/2018/11/node-red-debug.PNG)

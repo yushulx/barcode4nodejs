@@ -235,7 +235,7 @@ void BarcodeReader::WrapResults(BarcodeWorker *worker, Napi::Env env, Napi::Obje
 				res.Set("y3", Napi::Number::New(env, points[2][1]));
 				res.Set("x4", Napi::Number::New(env, points[3][0]));
 				res.Set("y4", Napi::Number::New(env, points[3][1]));
-				res.Set("page", Napi::Number::New(env, fileTag->GetPageNumber()));
+				res.Set("page", Napi::Number::New(env, fileTag != NULL ? fileTag->GetPageNumber() : 0));
 				res.Set("time", Napi::Number::New(env, worker->elapsedTime));
 				res.Set("angle", Napi::Number::New(env, barcodeResultItem->GetAngle()));
 				res.Set("isMirrored", Napi::Number::New(env, barcodeResultItem->IsMirrored()));

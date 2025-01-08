@@ -1,5 +1,5 @@
 var dbr = require('../../index.js');
-var barcodeTypes = dbr.barcodeTypes;
+var barcodeTypes = dbr.formats.ALL;
 var readline = require('readline');
 var fs = require('fs');
 
@@ -19,21 +19,6 @@ function decodeFileAsync(fileName) {
 }
 
 function decodeFileStreamAsync(fileName) {
-  // https://www.dynamsoft.com/help/Barcode-Reader/devguide/Template/ImageParameters/BarcodeFormatIds.html
-  // let params = {
-  //   "Version": "2.0",
-  //   "ImageParameter": {
-  //     "Name": "Custom_143301_827",
-  //     "BarcodeFormatIds": [
-  //       "PDF417"
-  //     ],
-  //     "ExpectedBarcodesCount": 9,
-  //     "ScaleDownThreshold": 1200000,
-  //     "BinarizationBlockSize": 5
-  //   }
-  // };
-  // template = JSON.stringify(params);
-
   let stats = fs.statSync(fileName);
   let fileSize = stats['size'];
 
@@ -57,27 +42,6 @@ function decodeFileStreamAsync(fileName) {
           console.log(error);
         }
       })();
-
-      // dbr.decodeFileStreamAsync(buffer, fileSize, barcodeTypes, function (err, msg) {
-      //   console.log(fileName);
-      //   console.log("Total: " + msg.length)
-      //   let result = null;
-      //   for (index in msg) {
-      //     result = msg[index];
-      //     console.log('Format: ' + result['format']);
-      //     console.log('Value : ' + result['value']);
-      //     console.log('x1: ' + result['x1']);
-      //     console.log('y1 : ' + result['y1']);
-      //     console.log('x2: ' + result['x2']);
-      //     console.log('y2 : ' + result['y2']);
-      //     console.log('x3: ' + result['x3']);
-      //     console.log('y3: ' + result['y3']);
-      //     console.log('x4: ' + result['x4']);
-      //     console.log('y4 : ' + result['y4']);
-      //   }
-      //   console.log(
-      //     'Done............................................................\n');
-      // }, template);
     });
   });
 }

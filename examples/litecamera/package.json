@@ -1,0 +1,17 @@
+{
+  "name": "litecamera",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "canvas": "^3.0.1",
+    "jpeg-js": "^0.4.4",
+    "litecam": "^1.0.0"
+  }
+}
