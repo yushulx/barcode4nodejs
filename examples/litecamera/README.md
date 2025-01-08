@@ -9,7 +9,7 @@ Build simple Node.js barcode reader applications for both desktop and web using 
 ## Installation
 
 ```bash
-npm install litecam barcode4nodejs
+npm install litecam barcode4nodejs canvas
 ```
 
 ## Usage
