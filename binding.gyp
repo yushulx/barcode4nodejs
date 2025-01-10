@@ -68,10 +68,12 @@
                     "defines": ["MAC_DBR"],
                     "cflags": ["-std=c++11", "-DNAPI_CPP_EXCEPTIONS"],
                     "cflags_cc": ["-std=c++11", "-DNAPI_CPP_EXCEPTIONS"],
-                    "ldflags": ["-Wl,-rpath,@loader_path"],
-                    "libraries": [
-                        "-lDynamsoftCore", "-lDynamsoftLicense", "-lDynamsoftCaptureVisionRouter", "-lDynamsoftUtility", "-L../platforms/macos"
-                    ],
+                    "link_settings": {
+                        "libraries": [
+                            "-Wl,-rpath,@loader_path",
+                             "-lDynamsoftCore", "-lDynamsoftLicense", "-lDynamsoftCaptureVisionRouter", "-lDynamsoftUtility", "-L../platforms/macos"
+                        ],
+                    },
                     "copies": [
                         {
                             "destination": "build/Release/",
