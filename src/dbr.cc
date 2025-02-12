@@ -210,7 +210,9 @@ void BarcodeReader::WrapResults(BarcodeWorker *worker, Napi::Env env, Napi::Obje
 {
 	vector<CDecodedBarcodesResult *> *pResults = worker->pResults;
 	Napi::Array barcodeResults = Napi::Array::New(env);
-	for (int j = 0; j < pResults->size(); j++)
+	int index = 0;
+	int size = pResults->size();
+	for (int j = 0; j < size; j++)
 	{
 		CDecodedBarcodesResult *barcodeResult = (*pResults)[j];
 
@@ -239,7 +241,7 @@ void BarcodeReader::WrapResults(BarcodeWorker *worker, Napi::Env env, Napi::Obje
 				res.Set("time", Napi::Number::New(env, worker->elapsedTime));
 				res.Set("angle", Napi::Number::New(env, barcodeResultItem->GetAngle()));
 				res.Set("isMirrored", Napi::Number::New(env, barcodeResultItem->IsMirrored()));
-				barcodeResults.Set(i + j * count, res);
+				barcodeResults.Set(index++, res);
 			}
 
 			barcodeResult->Release();
