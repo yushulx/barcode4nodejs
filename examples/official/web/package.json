@@ -8,8 +8,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "dynamsoft-capture-vision-for-node": "3.2.5002",
-    "dynamsoft-capture-vision-for-node-model": "3.2.5001",
+    "dynamsoft-capture-vision-for-node": "3.6.4000",
+    "dynamsoft-capture-vision-for-node-model": "3.6.4000",
     "express": "^4.21.2",
     "multer": "^2.0.2"
   }
