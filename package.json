@@ -1,7 +1,7 @@
 {
   "name": "barcode4nodejs",
-  "version": "10.0.7",
-  "description": "Node.js bindings to Dynamsoft Barcode Reader C/C++ SDK.",
+  "version": "11.0.0",
+  "description": "Node.js barcode and QR code SDK built on Dynamsoft Capture Vision - pure JavaScript, no native build step.",
   "keywords": [
     "barcode",
     "linear barcode",
@@ -19,7 +19,8 @@
     "UPC",
     "GS1",
     "Barcode SDK",
-    "Barcode Reader"
+    "Barcode Reader",
+    "Dynamsoft"
   ],
   "author": "yushulx",
   "license": "MIT",
@@ -29,32 +30,24 @@
   },
   "homepage": "https://github.com/yushulx/nodejs-barcode#readme",
   "main": "index.js",
+  "types": "index.d.ts",
   "files": [
-    "platforms/",
-    "scripts/",
-    "src/",
     "index.js",
     "index.d.ts",
-    "binding.gyp",
-    "package.json",
     "README.md",
-    "LICENSE",
-    "nativeLoader.js"
+    "LICENSE"
   ],
-  "types": "index.d.ts",
-  "typings": "",
-  "scripts": {
-    "preinstall": "npm run check-global-deps",
-    "install": "npm run configure && npm run build",
-    "configure": "node-gyp configure",
-    "build": "node-gyp configure build --jobs max",
-    "postinstall": "node ./scripts/postinstall.js",
-    "clean": "node-gyp clean",
-    "check-global-deps": "node ./scripts/checkGlobalDeps.js"
+  "engines": {
+    "node": ">=16"
   },
-  "gypfile": true,
+  "scripts": {
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "dynamsoft-capture-vision-for-node": "3.6.4002",
+    "dynamsoft-capture-vision-for-node-model": "3.6.4000"
+  },
   "devDependencies": {
-    "@types/node": "^20.14.2",
-    "node-gyp": "^10.1.0"
+    "@types/node": "^20.14.2"
   }
 }

@@ -12,12 +12,19 @@ var dbr = require('../../index.js');
 dbr.initLicense("DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==");
 var barcodeTypes = dbr.barcodeTypes;
 
-server.use(restify.bodyParser());
-
-server.get(/.*/, restify.serveStatic({
+// restify 4 exposes these helpers on the root object, restify 5+ moved them to `plugins`.
+var bodyParser = restify.plugins && restify.plugins.bodyParser ? restify.plugins.bodyParser() : restify.bodyParser();
+var serveStatic = restify.plugins && restify.plugins.serveStatic ? restify.plugins.serveStatic : restify.serveStatic;
+var staticHandler = serveStatic({
   directory: __dirname,
   default: 'index.html'
-}));
+});
+
+server.use(bodyParser);
+
+// restify 11 no longer accepts a RegExp route, use wildcard paths instead.
+server.get('/', staticHandler);
+server.get('/.*', staticHandler);
 
 server.post('/dbr', function create(req, res, next) {
   // console.log(req.body);

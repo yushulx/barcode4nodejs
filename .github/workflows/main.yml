@@ -5,20 +5,22 @@ jobs:
   test:
     name: Test example code
     runs-on: ubuntu-latest
+    env:
+      DCV_LICENSE: ${{ secrets.dcv_license }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
-      - name: test
-        run: |
-          npm i node-gyp -g
-          npm install
-          node-gyp configure
-          node-gyp build
-          node examples/command-line/test.js -f examples/command-line/test.tif 
-    
+      - name: install
+        run: npm install
+      - name: smoke test
+        run: node test.js
+      - name: decode test
+        if: env.DCV_LICENSE != ''
+        run: node test.js examples/command-line/test.tif
+
   publish:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')

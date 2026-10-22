@@ -29,21 +29,35 @@
             return vType;
         }
 
-        function doReadBarcode() {
-            var dbr = require('../../index.js');
-            // Get a license key from https://www.dynamsoft.com/customer/license/trialLicense/?product=dcv&package=cross-platform
-            dbr.initLicense("DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==");
-            var fileName = document.getElementById('fileToUpload').files[0].path;
-            dbr.decodeFileAsync(fileName, getSelectedBarcodeTypes(), function (err, msg) {
+        async function doReadBarcode() {
+            var resultBox = document.getElementById('resultBox');
+
+            var license = await window.dbr.initLicense();
+            if (license !== 0) {
+                resultBox.innerHTML = 'License initialization failed, check the console output.';
+                return;
+            }
+
+            var file = document.getElementById('fileToUpload').files[0];
+            if (!file) {
+                resultBox.innerHTML = 'Please choose an image file first.';
+                return;
+            }
+
+            resultBox.innerHTML = 'Decoding...';
+            try {
+                // `File.path` was removed in modern Electron, read the bytes instead.
+                var bytes = new Uint8Array(await file.arrayBuffer());
+                var msg = await window.dbr.decode(bytes, getSelectedBarcodeTypes());
+
                 var response = 'Totol count: ' + msg.length;
-                var result = null;
-                for (index in msg) {
-                    result = msg[index]
-                    response += '<p>' + result['format'] + ': ';
-                    response += result['value'] + '<p>';
+                for (var i = 0; i < msg.length; i++) {
+                    response += '<p>' + msg[i].format + ': ' + msg[i].value + '</p>';
                 }
-                document.getElementById('resultBox').innerHTML = response;
-            }, "");
+                resultBox.innerHTML = response;
+            } catch (err) {
+                resultBox.innerHTML = 'Failed to decode: ' + (err && err.message ? err.message : err);
+            }
         }
     </script>
 </head>

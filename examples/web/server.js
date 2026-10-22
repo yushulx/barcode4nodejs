@@ -14,6 +14,10 @@ var barcodeTypes = dbr.barcodeTypes;
 function decodeBarcode(res, fileName, barcodeType) {
     // read barcode using dbr
     dbr.decodeFileAsync(fileName, barcodeType, function (err, msg) {
+        if (err) {
+            res.send('Failed to decode: ' + (err.message || err));
+            return;
+        }
         var response = 'Totol count: ' + msg.length;
         var result = null;
         for (let index in msg) {
@@ -37,20 +41,35 @@ app.use(function (req, res, next) {
 app.post('/upload', function (req, res) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
+        if (err) {
+            res.status(400).send('Invalid upload: ' + err.message);
+            return;
+        }
+
+        // formidable v3 returns fields and files as arrays.
+        var pick = function (value) { return Array.isArray(value) ? value[0] : value; };
         var dir = 'uploads';
 
-        fs.mkdir(dir, function (err) {
-            var flag = fields.uploadFlag;
-            var barcodeType = parseInt(fields.barcodetype);
+        fs.mkdir(dir, { recursive: true }, function (err) {
+            var flag = pick(fields.uploadFlag);
+            var barcodeType = parseInt(pick(fields.barcodetype));
 
             console.log('flag: ' + flag);
 
             if (flag === '1') {
                 // read barcode image file
+                var upload = pick(files.fileToUpload);
+                if (!upload) {
+                    res.status(400).send('No file uploaded.');
+                    return;
+                }
+                var tmpPath = upload.filepath || upload.path;
+                var originalName = upload.originalFilename || upload.name;
+
                 fs
-                    .readFile(files.fileToUpload.path, function (err, data) {
+                    .readFile(tmpPath, function (err, data) {
                         // save file from temp dir to new dir
-                        var fileName = path.join(__dirname, dir, files.fileToUpload.name);
+                        var fileName = path.join(__dirname, dir, originalName);
                         console.log(fileName);
                         fs.writeFile(fileName, data, function (err) {
                             if (err)
@@ -63,7 +82,7 @@ app.post('/upload', function (req, res) {
             } else { // read barcode image url
                 var tmpFileName = path.join(__dirname, dir, 'tmp.jpg');
                 var tmp = fs.createWriteStream(tmpFileName);
-                var url = fields.fileToDownload;
+                var url = pick(fields.fileToDownload);
                 console.log('url: ' + url);
                 try {
                     http.get(url, function (response) {
@@ -74,6 +93,9 @@ app.post('/upload', function (req, res) {
                                     decodeBarcode(res, tmpFileName, barcodeType);
                                 });
                         });
+                    }).on('error', function (error) {
+                        console.log(error);
+                        res.send('Invalid image!');
                     });
                 } catch (error) {
                     console.log(error);

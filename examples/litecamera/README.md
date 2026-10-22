@@ -9,7 +9,19 @@ Build simple Node.js barcode reader applications for both desktop and web using 
 ## Installation
 
 ```bash
-npm install litecam barcode4nodejs canvas
+npm install
+```
+
+`litecam` is a native addon. If it fails to build on your machine, build it from
+[source](https://github.com/yushulx/nodejs-lite-camera) and install the local folder:
+
+```bash
+# next to the barcode4nodejs folder
+git clone https://github.com/yushulx/nodejs-lite-camera.git
+cd nodejs-lite-camera && npm install
+
+cd ../barcode4nodejs/examples/litecamera
+npm install ../../../nodejs-lite-camera --no-save
 ```
 
 ## Usage

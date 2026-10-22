@@ -1,24 +1,27 @@
 {
-  "name": "DynamsoftBarcodeReader",
+  "name": "dynamsoft-barcode-reader-electron",
   "version": "1.0.0",
-  "description": "Native desktop application based on Electron",
+  "description": "Native desktop barcode reader built with Electron and barcode4nodejs",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron .",
+    "test": "electron test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yushulx/nodejs-barcode-for-win-linux-mac.git"
+    "url": "git+https://github.com/yushulx/nodejs-barcode.git"
   },
   "keywords": [
     "Dynamsoft",
     "barcode",
     "reader",
-    "SDK"
+    "SDK",
+    "Electron"
   ],
   "author": "yushulx",
-  "homepage": "http://www.dynamsoft.com/Products/Dynamic-Barcode-Reader.aspx",
+  "license": "MIT",
+  "homepage": "https://github.com/yushulx/nodejs-barcode#readme",
   "devDependencies": {
-    "electron-prebuilt": "^0.36.0"
+    "electron": "^33.0.0"
   }
 }

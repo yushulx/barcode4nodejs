@@ -1,35 +1,48 @@
 # Native Desktop Barcode Reader
 
-The sample demonstrates how to create a native desktop barcode reader based on [Electron](http://electron.atom.io/docs/latest/tutorial/quick-start).
+A desktop barcode reader built with [Electron](https://www.electronjs.org/) and `barcode4nodejs`.
 
-A basic Electron application needs just these files:
+## Files
 
-- `index.htm` - A web page to render.
-- `main.js` - Starts the app and creates a browser window to render HTML.
-- `package.json` - Points to the app's main file and lists its details and dependencies.
+- `index.htm` - the UI (pick an image, choose barcode types, read).
+- `main.js` - creates the window.
+- `preload.js` - exposes the barcode API to the page through `contextBridge`.
+- `ipc.js` - runs the SDK in the main process and answers IPC calls.
+- `test.js` - headless end-to-end check.
 
 ## Getting Started
 
-1. Rebuild [dbr.node/dbr.so](https://github.com/yushulx/nodejs-barcode-for-win-linux-mac):
-
-    ```
-    # check electron version
-    electron –v
-    # rebuild the native node module
-    node-gyp rebuild --target=0.36.7 --arch=x64 --dist-url=https://atom.io/download/atom-shell
-    ```
-2. Install dependencies:
+1. Install dependencies:
 
     ```
     npm install
     ```
-3. Start the application:
+
+2. Start the application:
 
     ```
     npm start
     ```
 
-Learn more about Electron and its API in the [documentation](http://electron.atom.io/docs/latest).
+3. Run the headless check (decodes `../../images/test.tif`):
 
-## Blog
-[How to Build Cross-platform Desktop Barcode App with Electron](http://www.codepool.biz/cross-platform-desktop-barcode-electron.html)
+    ```
+    npm test
+    # or a specific image
+    npm test -- ../command-line/test.tif
+    ```
+
+## Why the SDK runs in the main process
+
+`barcode4nodejs` decodes in worker threads. Worker threads are not available in an Electron renderer
+process, so the page talks to the SDK through IPC: `index.htm` -> `preload.js` -> `ipc.js` ->
+`barcode4nodejs`. This also keeps decoding off the UI thread.
+
+> Since `barcode4nodejs` 11.0.0 the module is pure JavaScript. There is no `dbr.node` addon to rebuild
+> against the Electron ABI anymore, so the old `node-gyp rebuild --target=...` step is gone.
+
+## License
+
+Set `DCV_LICENSE` in the environment to use your own key, otherwise the trial key in `ipc.js` is used.
+
+[Get a 30-day trial license](https://www.dynamsoft.com/customer/license/trialLicense/?product=dcv&package=cross-platform)

@@ -10,7 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "canvas": "^3.0.1",
+    "canvas": "^3.2.3",
     "litecam": "^1.0.0"
   }
 }
