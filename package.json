@@ -26,9 +26,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yushulx/nodejs-barcode"
+    "url": "git+https://github.com/yushulx/barcode4nodejs.git"
   },
-  "homepage": "https://github.com/yushulx/nodejs-barcode#readme",
+  "homepage": "https://github.com/yushulx/barcode4nodejs#readme",
   "main": "index.js",
   "types": "index.d.ts",
   "files": [
