@@ -221,7 +221,7 @@ console.log(JSON.stringify(CaptureVisionRouter.outputSettings(), null, 2));
 - **Errors are reported.** Failures (invalid license, unreadable file, invalid template) reject the promise or
   call the callback with an `Error`. Older versions silently resolved with an empty array.
 - **`getVersion()`** returns the version of the Capture Vision SDK, e.g.
-  `js:3.6.4002.20261019;cpp:3.6.40.9167`.
+  `js:3.6.4002.20261019;cpp:3.6.40.9167` (Dynamsoft did not bump the JS prefix in 3.6.4003).
 - **Decoding runs in worker threads** managed by the SDK, so it never blocks the event loop. The worker pool is
   kept warm between calls and shut down automatically shortly after the last decode, which lets short-lived
   scripts exit on their own. `destroyInstance()` shuts it down immediately.

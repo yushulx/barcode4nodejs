@@ -1,6 +1,6 @@
 {
   "name": "barcode4nodejs",
-  "version": "11.0.0",
+  "version": "11.0.1",
   "description": "Node.js barcode and QR code SDK built on Dynamsoft Capture Vision - pure JavaScript, no native build step.",
   "keywords": [
     "barcode",
@@ -44,7 +44,7 @@
     "test": "node test.js"
   },
   "dependencies": {
-    "dynamsoft-capture-vision-for-node": "3.6.4002",
+    "dynamsoft-capture-vision-for-node": "3.6.4003",
     "dynamsoft-capture-vision-for-node-model": "3.6.4000"
   },
   "devDependencies": {
